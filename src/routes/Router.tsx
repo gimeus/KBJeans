@@ -3,15 +3,16 @@ import KBStarBanking from '../pages/KBStarBanking.tsx';
 import Onboarding from '../pages/Onboarding.tsx';
 import Information from '../pages/Information.tsx';
 import Notification from '../pages/Notification.tsx';
+import Home from '../pages/Home.tsx';
 
 function Router() {
   return (
     <Routes>
-      <Route path="/" element={<KBStarBanking />} />
+      <Route path="/KBStarBanking" element={<KBStarBanking />} />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/information" element={<Information />} />
       <Route path="/notification" element={<Notification />} />
-      {/* 추가 라우트 */}
+      <Route path="/" element={<Home />} />
     </Routes>
   );
 }
