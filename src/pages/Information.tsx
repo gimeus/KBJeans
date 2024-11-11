@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-const Home = () => {
-  return <Title>홈</Title>;
+const Information = () => {
+  return <Title>정보</Title>;
 };
 
 const Title = styled.h1`
@@ -10,4 +10,4 @@ const Title = styled.h1`
   font-weight: bold;
 `;
 
-export default Home;
+export default Information;
