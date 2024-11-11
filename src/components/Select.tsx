@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-const Select = ({ label = '선택해주세요', options = [] }) => {
+const Select = ({ label = '선택해주세요', options = [], onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(label);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
+
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setIsOpen(false);
+    if (onSelect) onSelect(option);
   };
 
   return (

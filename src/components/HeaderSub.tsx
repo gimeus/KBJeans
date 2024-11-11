@@ -22,6 +22,7 @@ const HeaderContainer = styled.header`
   background-color: var(--g60);
   position: relative;
   box-sizing: border-box;
+  display: flex;
 `;
 
 const BackIcon = styled.img`
