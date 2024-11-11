@@ -41,6 +41,7 @@ const HeaderContainer = styled.header`
   padding: 0 30px 0 20px;
   background-color: var(--g60);
   box-sizing: border-box;
+  display: flex;
 `;
 
 const LeftSection = styled.div`
