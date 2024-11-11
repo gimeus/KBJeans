@@ -7,7 +7,11 @@ const HeaderMain = () => {
   return (
     <HeaderContainer>
       <LeftSection>
-        <BackIcon src="/icons/back.svg" alt="Back" />
+        <BackIcon
+          src="/icons/back.svg"
+          alt="Back"
+          onClick={() => navigate(-1)}
+        />
         <Title>주택청약</Title>
       </LeftSection>
       <IconGroup>
@@ -32,7 +36,7 @@ const HeaderContainer = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 375px;
+  width: 100%;
   height: 64px;
   padding: 0 30px 0 20px;
   background-color: var(--g60);
