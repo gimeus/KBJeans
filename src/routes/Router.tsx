@@ -8,11 +8,11 @@ import Home from '../pages/Home.tsx';
 function Router() {
   return (
     <Routes>
+      <Route path="/" element={<Home />} />
       <Route path="/KBStarBanking" element={<KBStarBanking />} />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/information" element={<Information />} />
       <Route path="/notification" element={<Notification />} />
-      <Route path="/" element={<Home />} />
     </Routes>
   );
 }
