@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const Home = () => {
-  return <Title>홈</Title>;
+  return <Title>KB스타뱅킹</Title>;
 };
 
 const Title = styled.h1`
