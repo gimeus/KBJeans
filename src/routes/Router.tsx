@@ -2,6 +2,8 @@ import { Routes, Route } from 'react-router-dom';
 import KBStarBanking from '../pages/KBStarBanking.tsx';
 import Onboarding from '../pages/Onboarding.tsx';
 import Information from '../pages/Information.tsx';
+import InformationCalendar from '../pages/InformationCalendar.tsx';
+import InformationMap from '../pages/InformationMap.tsx';
 import Notification from '../pages/Notification.tsx';
 import Home from '../pages/Home.tsx';
 
@@ -12,6 +14,8 @@ function Router() {
       <Route path="/KBStarBanking" element={<KBStarBanking />} />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/information" element={<Information />} />
+      <Route path="/information-calendar" element={<InformationCalendar />} />
+      <Route path="/information-map" element={<InformationMap />} />
       <Route path="/notification" element={<Notification />} />
     </Routes>
   );
