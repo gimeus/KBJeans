@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-// Icon 경로
 const backIcon = '/icons/back.svg';
 const searchIcon = '/icons/search.svg';
 const categoryIcon = '/icons/multimedia.svg';
@@ -8,12 +7,12 @@ const categoryIcon = '/icons/multimedia.svg';
 const HeaderSearch = () => {
   return (
     <Container>
-      <Icon src={backIcon} alt="뒤로가기" margin="0 10px 0 0" />
+      <BackIcon src={backIcon} alt="뒤로가기" />
       <SearchBox>
-        <Icon src={searchIcon} alt="서치 아이콘" margin="0 10px 0 0" />
+        <SearchIcon src={searchIcon} alt="서치 아이콘" />
         <PlaceholderText>지역 검색</PlaceholderText>
       </SearchBox>
-      <Icon src={categoryIcon} alt="카테고리 선택" margin="0 0 0 14px" />
+      <CategoryIcon src={categoryIcon} alt="카테고리 선택" />
     </Container>
   );
 };
@@ -39,10 +38,22 @@ const SearchBox = styled.div`
   padding: 0 16px;
 `;
 
-const Icon = styled.img<{ margin?: string }>`
+const BackIcon = styled.img`
   width: 24px;
   height: 24px;
-  margin: ${({ margin }) => margin || '0'};
+  margin-right: 10px;
+`;
+
+const SearchIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+`;
+
+const CategoryIcon = styled.img`
+  width: 24px;
+  height: 24px;
+  margin-left: 14px;
 `;
 
 const PlaceholderText = styled.span`
