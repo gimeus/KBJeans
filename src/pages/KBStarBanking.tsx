@@ -6,7 +6,7 @@ const KBStarBanking = () => {
   const navigate = useNavigate();
 
   const handleImageClick = () => {
-    navigate('/onboarding');
+    navigate('/onboarding-intro');
   };
 
   return (
