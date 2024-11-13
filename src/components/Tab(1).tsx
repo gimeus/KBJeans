@@ -20,12 +20,12 @@ const Tab: React.FC<TabProps> = ({ tabs, onTabChange }) => {
         <TabItem
           key={index}
           onClick={() => handleTabClick(index)}
-          selected={selectedTab === index}
+          $selected={selectedTab === index}
         >
           {tab}
         </TabItem>
       ))}
-      <Underline selectedTab={selectedTab} tabCount={tabs.length} />
+      <Underline $selectedTab={selectedTab} $tabCount={tabs.length} />{' '}
     </TabContainer>
   );
 };
@@ -42,11 +42,11 @@ const TabContainer = styled.div`
 `;
 
 interface TabItemProps {
-  selected: boolean;
+  $selected: boolean;
 }
 
 const TabItem = styled.div<TabItemProps>`
-  color: ${({ selected }) => (selected ? 'var(--g30)' : 'var(--g40)')};
+  color: ${({ $selected }) => ($selected ? 'var(--g30)' : 'var(--g40)')};
   text-align: center;
   font-size: 15px;
   font-weight: 500;
@@ -57,16 +57,16 @@ const TabItem = styled.div<TabItemProps>`
 `;
 
 interface UnderlineProps {
-  selectedTab: number;
-  tabCount: number;
+  $selectedTab: number;
+  $tabCount: number;
 }
 
 const Underline = styled.div<UnderlineProps>`
   position: absolute;
   bottom: 0;
-  left: ${({ selectedTab, tabCount }) =>
-    `calc(${(selectedTab / tabCount) * 100}%)`};
-  width: ${({ tabCount }) => `calc(100% / ${tabCount})`};
+  left: ${({ $selectedTab, $tabCount }) =>
+    `calc(${($selectedTab / $tabCount) * 100}%)`};
+  width: ${({ $tabCount }) => `calc(100% / ${$tabCount})`};
   height: 2px;
   background-color: var(--g30);
   transition: left 0.3s ease;
