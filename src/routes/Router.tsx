@@ -12,7 +12,7 @@ function Router() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/KBStarBanking" element={<KBStarBanking />} />
+      <Route path="/kb-starbanking" element={<KBStarBanking />} />
       <Route path="/onboarding" element={<Onboarding />} />
       <Route path="/information" element={<Information />} />
       <Route path="/information-calendar" element={<InformationCalendar />} />

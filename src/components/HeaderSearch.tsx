@@ -7,12 +7,12 @@ const categoryIcon = '/icons/multimedia.svg';
 const HeaderSearch = () => {
   return (
     <Container>
-      <BackIcon src={backIcon} alt="뒤로가기" />
+      <BackIcon src={backIcon} />
       <SearchBox>
-        <SearchIcon src={searchIcon} alt="서치 아이콘" />
+        <SearchIcon src={searchIcon} />
         <PlaceholderText>지역 검색</PlaceholderText>
       </SearchBox>
-      <CategoryIcon src={categoryIcon} alt="카테고리 선택" />
+      <CategoryIcon src={categoryIcon} />
     </Container>
   );
 };

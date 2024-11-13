@@ -1,13 +1,42 @@
+import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
-const Home = () => {
-  return <Title>KB스타뱅킹</Title>;
+const KBStarBanking = () => {
+  const navigate = useNavigate();
+
+  const handleImageClick = () => {
+    navigate('/onboarding');
+  };
+
+  return (
+    <Container>
+      <Image src="/img/kb-starbanking.png" alt="KB Star Banking" />
+      <ServiceListImage
+        src="/img/service.png"
+        alt="KB 부동산 서비스 목록"
+        onClick={handleImageClick}
+      />
+    </Container>
+  );
 };
 
-const Title = styled.h1`
-  color: var(--g10);
-  font-size: 24px;
-  font-weight: bold;
+export default KBStarBanking;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 `;
 
-export default Home;
+const Image = styled.img`
+  width: 100%;
+  max-width: 375px;
+`;
+
+const ServiceListImage = styled.img`
+  width: 100%;
+  max-width: 375px;
+  margin-top: 2px;
+`;

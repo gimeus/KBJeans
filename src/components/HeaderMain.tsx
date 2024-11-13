@@ -8,9 +8,9 @@ const HeaderMain = () => {
     <HeaderContainer>
       <LeftSection>
         <BackIcon
-          src="/icons/back.svg"
+          src="/icons/back-big.svg"
           alt="Back"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/kb-starbanking')}
         />
         <Title>주택청약</Title>
       </LeftSection>
@@ -38,7 +38,7 @@ const HeaderContainer = styled.header`
   justify-content: space-between;
   width: 100%;
   height: 64px;
-  padding: 0 30px 0 20px;
+  padding: 0 22px 0 20px;
   background-color: var(--g60);
   box-sizing: border-box;
   display: flex;
@@ -47,7 +47,7 @@ const HeaderContainer = styled.header`
 const LeftSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 `;
 
 const BackIcon = styled.img`
