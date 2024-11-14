@@ -6,6 +6,7 @@ import Tab2 from '@/components/Tab(2)';
 import HeaderMain from '@/components/HeaderMain';
 import HeaderSub from '@/components/HeaderSub';
 import OfferBanner from '@/components/OfferBanner';
+import Card from '@/components/Card';
 
 const Component = () => {
   const [selectedTab1, setSelectedTab1] = useState(0);
@@ -21,6 +22,27 @@ const Component = () => {
     { label: 'NEW', text: '다산 센트럴파크단지 영구임대주택' },
     { label: 'NEW', text: '서울 강남구 청담동 신축 아파트' },
     { label: 'NEW', text: '용인 수지구 오피스텔 특별 분양' },
+  ];
+
+  const dummyCardData = [
+    {
+      status: '접수 종료',
+      scale: '공급규모 4세대',
+      apartmentName: '이문월드메르디앙 힐트리움 더테라스',
+      address: '서울특별시 동대문구 이문동 348-11, 348-12',
+    },
+    {
+      status: '접수 시작',
+      scale: '공급규모 10세대',
+      apartmentName: '강남 오피스텔',
+      address: '서울특별시 강남구 역삼동 123-45',
+    },
+    {
+      status: '접수 예정',
+      scale: '공급규모 20세대',
+      apartmentName: '부산 해운대 타워',
+      address: '부산광역시 해운대구 해운대동 567-89',
+    },
   ];
 
   useEffect(() => {
@@ -56,7 +78,19 @@ const Component = () => {
             text={dummyData[currentIndex].text}
           />
           <Content>
-            {selectedTab2 === 0 && <div>전체 청약 정보 내용</div>}
+            {selectedTab2 === 0 && (
+              <div>
+                {dummyCardData.map((card, index) => (
+                  <Card
+                    key={index}
+                    status={card.status}
+                    scale={card.scale}
+                    apartmentName={card.apartmentName}
+                    address={card.address}
+                  />
+                ))}
+              </div>
+            )}
             {selectedTab2 === 1 && <div>찜한 청약 정보 내용</div>}
           </Content>
         </Tab2Container>
@@ -78,6 +112,7 @@ const Tab2Container = styled.div`
 `;
 
 const Content = styled.div`
-  margin-top: 16px;
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `;
