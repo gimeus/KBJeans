@@ -1,22 +1,34 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-const Select = ({ label = '선택해주세요', options = [], onSelect }) => {
+const downIcon = '/icons/down.svg';
+
+interface SelectProps {
+  label?: string;
+  options: string[];
+  onSelect: (option: string) => void;
+}
+
+const Select: React.FC<SelectProps> = ({
+  label = '선택해주세요',
+  options = [],
+  onSelect,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(label);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
-  const handleOptionClick = (option) => {
+  const handleOptionClick = (option: string) => {
     setSelectedOption(option);
     setIsOpen(false);
-    if (onSelect) onSelect(option);
+    onSelect(option);
   };
 
   return (
     <SelectContainer onClick={toggleDropdown}>
       <Label>{selectedOption}</Label>
-      <Icon src="/icons/down.svg" alt="Dropdown icon" />
+      <Icon src={downIcon} alt="Dropdown icon" />
       {isOpen && (
         <Dropdown>
           {options.map((option, index) => (
@@ -33,7 +45,7 @@ const Select = ({ label = '선택해주세요', options = [], onSelect }) => {
 export default Select;
 
 const SelectContainer = styled.div`
-  width: 339px;
+  width: 100%;
   height: 56px;
   background-color: var(--g60);
   border: 1px solid var(--g50);
@@ -50,7 +62,6 @@ const SelectContainer = styled.div`
 const Label = styled.span`
   font-size: 16px;
   font-weight: 400;
-  line-height: 100%;
   color: var(--g20);
 `;
 
@@ -75,7 +86,6 @@ const Dropdown = styled.div`
 const Option = styled.div`
   padding: 14px 20px;
   font-size: 16px;
-  font-weight: 400;
   color: var(--g20);
   cursor: pointer;
   &:hover {

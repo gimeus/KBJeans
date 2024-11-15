@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
-const HeaderMain = () => {
+const HeaderMain = ({ backgroundColor = 'var(--g60)' }) => {
   const navigate = useNavigate();
 
   return (
-    <HeaderContainer>
+    <HeaderContainer backgroundColor={backgroundColor}>
       <LeftSection>
         <BackIcon
           src="/icons/back-big.svg"
@@ -32,16 +32,17 @@ const HeaderMain = () => {
 
 export default HeaderMain;
 
-const HeaderContainer = styled.header`
+const HeaderContainer = styled.header.withConfig({
+  shouldForwardProp: (prop) => prop !== 'backgroundColor',
+})`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
   height: 64px;
   padding: 0 22px 0 20px;
-  background-color: var(--g60);
   box-sizing: border-box;
-  display: flex;
+  background-color: ${(props) => props.backgroundColor};
 `;
 
 const LeftSection = styled.div`
