@@ -5,6 +5,7 @@ import ApplyScore from '@/components/ApplyScore';
 import OfferBanner from '@/components/OfferBanner';
 import Select from '@/components/Select';
 import { useArea } from '@/context/AreaContext';
+import GoalSelection from '@/components/GoalSelection';
 
 const Home = () => {
   const { selectedArea, depositAmount, setSelectedArea } = useArea();
@@ -57,6 +58,7 @@ const Home = () => {
           </Group>
           <Group>
             <SectionTitle>청약 지역 달성율</SectionTitle>
+            <GoalSelection />
           </Group>
         </MainContentGroup>
       </ContentGroup>
@@ -113,7 +115,7 @@ const AlignCenter = styled.div`
 const Group = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 14px;
   padding: 0 18px;
   width: 100%;
 `;
@@ -121,6 +123,7 @@ const Group = styled.div`
 const Section = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
   margin: 0 2px;
 `;
@@ -130,10 +133,13 @@ const SectionTitle = styled.h2`
   font-size: 18px;
   font-weight: 600;
   line-height: 100%;
+  flex: 1;
 `;
 
 const DepositInfo = styled.p`
   font-size: 14px;
   color: var(--p10);
   line-height: 100%;
+  flex: 1;
+  text-align: right;
 `;

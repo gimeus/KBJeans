@@ -32,11 +32,11 @@ const OfferBannerContainer = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % dummyData.length);
-      setIsTransitioning(true); // 슬라이딩 시작
-      setTimeout(() => setIsTransitioning(false), 500); // 슬라이드 종료 후 transitioning 상태 리셋
+      setIsTransitioning(true);
+      setTimeout(() => setIsTransitioning(false), 500);
     }, 3000);
 
-    return () => clearInterval(interval); // 클린업
+    return () => clearInterval(interval);
   }, []);
 
   return (
