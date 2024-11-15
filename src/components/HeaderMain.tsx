@@ -12,7 +12,7 @@ const HeaderMain = () => {
           alt="Back"
           onClick={() => navigate('/kb-starbanking')}
         />
-        <Title>주택청약</Title>
+        <Title>부동산</Title>
       </LeftSection>
       <IconGroup>
         <Icon
