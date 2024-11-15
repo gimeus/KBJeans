@@ -1,11 +1,20 @@
+import React from 'react';
 import styled from 'styled-components';
 import HeaderMain from '@/components/HeaderMain';
+import StatusInfo from '@/components/StatusInfo';
 
 const Home = () => {
+  // 더미 데이터
+  const badgeCount = 3;
+  const subscriptionAmount = 150000;
+
   return (
     <Container>
       <HeaderMain />
-      <Title>홈</Title>
+      <StatusInfo
+        badgeCount={badgeCount}
+        subscriptionAmount={subscriptionAmount}
+      />
     </Container>
   );
 };
@@ -17,11 +26,4 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-`;
-
-const Title = styled.h1`
-  color: var(--g10);
-  font-size: 24px;
-  font-weight: bold;
-  margin-top: 16px;
 `;
