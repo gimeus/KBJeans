@@ -1,33 +1,34 @@
-import React, { useState } from 'react';
 import styled from 'styled-components';
 import HeaderMain from '@/components/HeaderMain';
 import HeaderSub from '@/components/HeaderSub';
 import Button from '@/components/Button';
 import Select from '@/components/Select';
 import { useNavigate } from 'react-router-dom';
+import { useArea } from '@/context/AreaContext';
 
 const Onboarding = () => {
   const navigate = useNavigate();
-  const [selectedAmount, setSelectedAmount] = useState('200-300만원 이상 예치');
-
-  const handleButtonClick = () => {
-    navigate('/');
-  };
+  const { selectedArea, setSelectedArea, depositAmount } = useArea();
 
   const areaOptions = [
+    { label: '면적 선택', amount: '면적 선택 시 예상 예치금 안내' },
     { label: '85㎡ 이하 (32평)', amount: '200-300만원 이상 예치' },
     { label: '102㎡ 이하 (39평)', amount: '300-600만원 이상 예치' },
     { label: '135㎡ 이하 (51평)', amount: '400-1000만원 이상 예치' },
     { label: '모든 면적', amount: '500-1500만원 이상 예치' },
   ];
 
-  const handleSelectChange = (selectedLabel) => {
+  const handleSelectChange = (selectedLabel: string) => {
     const selectedOption = areaOptions.find(
       (option) => option.label === selectedLabel
     );
     if (selectedOption) {
-      setSelectedAmount(selectedOption.amount);
+      setSelectedArea(selectedOption.label, selectedOption.amount);
     }
+  };
+
+  const handleButtonClick = () => {
+    navigate('/');
   };
 
   return (
@@ -39,7 +40,7 @@ const Onboarding = () => {
           <Label>희망하는 면적을 선택해주세요</Label>
           <DepositInfo>
             <span>예치금</span>
-            <DepositAmount>{selectedAmount}</DepositAmount>
+            <DepositAmount>{depositAmount}</DepositAmount>
           </DepositInfo>
         </TextSection>
 
@@ -90,6 +91,7 @@ const TextSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 14px;
+  margin: 0 2px;
 `;
 
 const Label = styled.p`
@@ -97,7 +99,6 @@ const Label = styled.p`
   font-size: 18px;
   font-weight: 400;
   line-height: 100%;
-  padding: 0 2px;
 `;
 
 const DepositInfo = styled.div`
@@ -108,16 +109,18 @@ const DepositInfo = styled.div`
   font-size: 15px;
   font-weight: 400;
   line-height: 100%;
-  padding: 0 2px;
 `;
 
 const DepositAmount = styled.span`
   color: var(--p10);
   font-size: 15px;
   font-weight: 400;
+  line-height: 100%;
 `;
 
-const SelectSection = styled.div``;
+const SelectSection = styled.div`
+  width: 100%;
+`;
 
 const InfoBox = styled.div`
   background-color: var(--n30);
@@ -133,7 +136,6 @@ const InfoTitle = styled.p`
   font-size: 20px;
   font-weight: 600;
   line-height: 100%;
-  padding-left: 6px;
 `;
 
 const InfoDescription = styled.p`
@@ -141,18 +143,18 @@ const InfoDescription = styled.p`
   color: var(--g30);
   font-weight: 300;
   line-height: 140%;
-  padding-left: 6px;
 `;
 
 const Highlight = styled.span`
   color: var(--p10);
-  font-size: 16px;
-  font-weight: 300;
-  line-height: 140%;
 `;
 
 const InfoImage = styled.img`
   width: 100%;
 `;
 
-const Footer = styled.div``;
+const Footer = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+`;
