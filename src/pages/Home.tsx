@@ -6,11 +6,13 @@ import OfferBanner from '@/components/OfferBanner';
 import Select from '@/components/Select';
 import { useArea } from '@/context/AreaContext';
 import GoalSelection from '@/components/GoalSelection';
+import Message from '@/components/Message';
 
 const Home = () => {
   const { selectedArea, depositAmount, setSelectedArea } = useArea();
   const badgeCount = 1;
   const subscriptionAmount = 150000;
+  const message = '다음 건물까지 100,000원 예치';
 
   const areaOptions = [
     { label: '85㎡ 이하 (32평)', amount: '200-300만원 이상 예치' },
@@ -36,6 +38,7 @@ const Home = () => {
           badgeCount={badgeCount}
           subscriptionAmount={subscriptionAmount}
         />
+        <Message message={message} />
       </BackgroundSection>
       <ContentGroup>
         <BannerGroup>
@@ -77,10 +80,14 @@ const Wrapper = styled.div`
 
 const BackgroundSection = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
   height: 300px;
   background: linear-gradient(180deg, #d0f0fe 4.68%, #e5f6fe 40.64%);
+  position: relative;
+  padding: 20px;
 `;
 
 const ContentGroup = styled.div`
