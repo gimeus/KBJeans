@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Router from './routes/Router';
 import { requestFirebaseNotificationPermission } from './firebase'; // Firebase FCM 관련 함수 import
+import { AreaProvider } from './context/AreaContext'; // AreaProvider 임포트
 
 const App = () => {
   // 애플리케이션이 로드될 때 알림 권한 요청
@@ -39,9 +40,13 @@ const App = () => {
   }, []); // 빈 의존성 배열로 컴포넌트 마운트 시 한 번만 실행
 
   return (
-    <div className="app-container">
-      <Router />
-    </div>
+    <AreaProvider>
+      {' '}
+      {/* AreaProvider로 전체 감싸기 */}
+      <div className="app-container">
+        <Router />
+      </div>
+    </AreaProvider>
   );
 };
 

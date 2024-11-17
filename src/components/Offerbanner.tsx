@@ -1,9 +1,11 @@
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 
 interface OfferBannerProps {
   label: string;
   text: string;
+  currentIndex: number;
+  isTransitioning: boolean;
 }
 
 const OfferBanner: React.FC<OfferBannerProps> = ({ label, text }) => {
@@ -17,7 +19,39 @@ const OfferBanner: React.FC<OfferBannerProps> = ({ label, text }) => {
   );
 };
 
-export default OfferBanner;
+const OfferBannerContainer = () => {
+  const dummyData = [
+    { label: 'NEW', text: '다산 센트럴파크단지 영구임대주택' },
+    { label: 'NEW', text: '서울 강남구 청담동 신축 아파트' },
+    { label: 'NEW', text: '용인 수지구 오피스텔 특별 분양' },
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % dummyData.length);
+      setIsTransitioning(true);
+      setTimeout(() => setIsTransitioning(false), 500);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <OfferBanner
+      label={dummyData[currentIndex].label}
+      text={dummyData[currentIndex].text}
+      currentIndex={currentIndex}
+      isTransitioning={isTransitioning}
+    />
+  );
+};
+
+export default OfferBannerContainer;
+
+// styled-components
 
 const BannerContainer = styled.div`
   width: 100%;
