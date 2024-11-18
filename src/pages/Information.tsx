@@ -87,14 +87,20 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  box-sizing: border-box;
 `;
 
 const Tab2Container = styled.div`
   margin-top: 16px;
+  overflow-x: hidden;
 `;
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding: 6px 0;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--n30);
 `;
