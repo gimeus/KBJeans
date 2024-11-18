@@ -44,26 +44,31 @@ export default Card;
 
 const CardContainer = styled.div`
   width: 100%;
-  height: auto;
-  padding: 18px 20px;
+  max-width: calc(100% - 36px);
+  padding: 18px;
   background-color: var(--g60);
   display: flex;
   flex-direction: column;
   position: relative;
+  border-radius: 10px;
+  margin: 12px auto;
+  box-sizing: border-box;
+  overflow: hidden;
 `;
 
 const TagContainer = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 `;
 
 const ScaleTag = styled.span`
   color: var(--n10);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 100%;
+  margin-left: 8px;
 `;
 
 const StatusTag = styled.span<{ status: string }>`
@@ -72,13 +77,16 @@ const StatusTag = styled.span<{ status: string }>`
   line-height: 100%;
   padding: 5px 6px;
   border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
   ${({ status }) =>
     status === '접수 종료' &&
     css`
       background-color: var(--n30);
       color: var(--n10);
     `}
-
   ${({ status }) =>
     (status === '접수 예정' || status === '접수 시작') &&
     css`
