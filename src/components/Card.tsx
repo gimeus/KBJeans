@@ -66,7 +66,7 @@ const TagContainer = styled.div`
 const ScaleTag = styled.span`
   color: var(--n10);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 100%;
   margin-left: 8px;
 `;
@@ -98,7 +98,7 @@ const StatusTag = styled.span<{ status: string }>`
 const Title = styled.h2`
   color: var(--g10);
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 100%;
   margin-bottom: 10px;
   margin-left: 2px;

@@ -25,7 +25,7 @@ const Tab: React.FC<TabProps> = ({ tabs, onTabChange }) => {
           {tab}
         </TabItem>
       ))}
-      <Underline $selectedTab={selectedTab} $tabCount={tabs.length} />{' '}
+      <Underline $selectedTab={selectedTab} $tabCount={tabs.length} />
     </TabContainer>
   );
 };
@@ -37,6 +37,7 @@ const TabContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   position: relative;
+  background-color: var(--g60); /* 배경색 설정 */
   border-bottom: 0.75px solid var(--g50);
   padding-bottom: 2.5px;
 `;
