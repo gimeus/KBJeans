@@ -51,56 +51,68 @@ const Component = () => {
   };
 
   return (
-    <Container>
+    <PageWrapper>
       <HeaderMain />
       <HeaderSub title={tabs1[selectedTab1]} />
-      <Tab1 tabs={tabs1} onTabChange={handleTab1Change} />
+      <GroupWrapper>
+        <Tab1 tabs={tabs1} onTabChange={handleTab1Change} />
+        {selectedTab1 === 0 && (
+          <>
+            <Tab2Wrapper>
+              <Tab2 tabs={tabs2} onTabChange={handleTab2Change} />
+            </Tab2Wrapper>
+            <OfferBanner />
+          </>
+        )}
+      </GroupWrapper>
       {selectedTab1 === 0 && (
-        <Tab2Container>
-          <Tab2 tabs={tabs2} onTabChange={handleTab2Change} />
-          <OfferBanner />
-          <Content>
-            {selectedTab2 === 0 && (
-              <div>
-                {dummyCardData.map((card, index) => (
-                  <Card
-                    key={index}
-                    status={card.status}
-                    scale={card.scale}
-                    apartmentName={card.apartmentName}
-                    address={card.address}
-                  />
-                ))}
-              </div>
-            )}
-            {selectedTab2 === 1 && <div>찜한 청약 정보 내용</div>}
-          </Content>
-        </Tab2Container>
+        <Content>
+          {selectedTab2 === 0 && (
+            <div>
+              {dummyCardData.map((card, index) => (
+                <Card
+                  key={index}
+                  status={card.status}
+                  scale={card.scale}
+                  apartmentName={card.apartmentName}
+                  address={card.address}
+                />
+              ))}
+            </div>
+          )}
+          {selectedTab2 === 1 && <div>찜한 청약 정보 내용</div>}
+        </Content>
       )}
-    </Container>
+    </PageWrapper>
   );
 };
 
 export default Component;
 
-const Container = styled.div`
+const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-height: 100vh;
+  background-color: var(--n30);
   box-sizing: border-box;
 `;
 
-const Tab2Container = styled.div`
-  margin-top: 16px;
-  overflow-x: hidden;
+const GroupWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: var(--g60);
+  box-sizing: border-box;
+`;
+
+const Tab2Wrapper = styled.div`
+  padding: 12px 0 10px 0;
+  box-sizing: border-box;
 `;
 
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 6px 0;
   width: 100%;
   box-sizing: border-box;
-  background-color: var(--n30);
 `;
