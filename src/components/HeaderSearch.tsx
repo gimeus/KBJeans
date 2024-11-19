@@ -1,13 +1,20 @@
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const backIcon = '/icons/back.svg';
 const searchIcon = '/icons/search.svg';
 const categoryIcon = '/icons/multimedia.svg';
 
 const HeaderSearch = () => {
+  const navigate = useNavigate();
+
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   return (
     <Container>
-      <BackIcon src={backIcon} />
+      <BackIcon src={backIcon} onClick={handleBackClick} />
       <SearchBox>
         <SearchIcon src={searchIcon} />
         <PlaceholderText>지역 검색</PlaceholderText>
