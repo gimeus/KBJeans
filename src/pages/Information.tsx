@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Tab1 from '@/components/Tab(1)';
@@ -101,7 +101,9 @@ const Information = () => {
       {selectedTab1 === 0 && (
         <Content>
           {loading ? (
-            <div>로딩 중...</div>
+            <SpinnerWrapper>
+              <Spinner />
+            </SpinnerWrapper>
           ) : (
             <div>
               {housingResponse?.data.map((housing) => (
@@ -117,7 +119,8 @@ const Information = () => {
                   pblanc_no={housing.pblanc_no}
                   house_manage_no={housing.house_manage_no}
                   liked={housing.isLiked}
-                  onLikeClick={handleLike}
+                  userId={1} // 사용자 ID 전달
+                  fetchHousings={fetchHousings} // fetchHousings 전달
                 />
               ))}
             </div>
@@ -156,4 +159,29 @@ const Content = styled.div`
   flex-direction: column;
   width: 100%;
   box-sizing: border-box;
+`;
+
+const SpinnerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* 로딩 스피너의 영역 높이 */
+`;
+
+const spin = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`;
+
+const Spinner = styled.div`
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--n20);
+  border-top: 4px solid var(--g60);
+  border-radius: 50%;
+  animation: ${spin} 1s linear infinite; /* 회전 애니메이션 */
 `;

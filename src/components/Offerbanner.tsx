@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { fetchHousingAnnouncements } from '@/api/housingApi';
+import axios from 'axios';
+import { HousingResponse } from '@/types/housing';
 
 interface OfferBannerProps {
   label: string;
@@ -21,31 +22,43 @@ const OfferBanner: React.FC<OfferBannerProps> = ({ label, text }) => {
 };
 
 const OfferBannerContainer = () => {
-
-  const [bannerData, setBannerData] = useState<{ label: string; text: string }[]>(
-    []
-  );
+  const [bannerData, setBannerData] = useState<
+    { label: string; text: string }[]
+  >([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-
   useEffect(() => {
     const loadBannerData = async () => {
       try {
-        const userId = 1; // 예제 사용자 ID
-        const page = 1;
-        const pageSize = 3;
+        const userId = 1;
+        const response = await axios.get<HousingResponse>(
+          'http://localhost:8080/api/v1/housing/getAnnouncement',
+          {
+            params: {
+              page: 1,
+              pageSize: 10,
+              userId,
+            },
+          }
+        );
 
-        const data = await fetchHousingAnnouncements(page, pageSize, userId);
-        
-        // API 결과에서 house_nm 값만 추출하여 bannerData로 설정
-        const transformedData = data.data.map((house: { house_nm: string }) => ({
-          label: 'NEW',
-          text: house.house_nm,
-        }));
+        // 최근 2일 이내의 공고만 필터링
+        const twoDaysAgo = new Date();
+        twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
 
-        setBannerData(transformedData);
+        const recentAnnouncements = response.data.data
+          .filter((housing) => {
+            const announceDate = new Date(housing.rcrit_pblanc_de);
+            return announceDate >= twoDaysAgo && announceDate <= new Date();
+          })
+          .map((housing) => ({
+            label: 'NEW',
+            text: housing.house_nm,
+          }));
+
+        setBannerData(recentAnnouncements);
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching banner data:', error);
@@ -68,12 +81,8 @@ const OfferBannerContainer = () => {
     }
   }, [bannerData]);
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
-
-  if (bannerData.length === 0) {
-    return <p>No data available</p>;
+  if (isLoading || bannerData.length === 0) {
+    return null; // 로딩 중이거나 데이터가 없으면 아무것도 표시하지 않음
   }
 
   return (
