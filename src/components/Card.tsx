@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
+import axios from 'axios';
 
 const heartIcon = '/icons/heart.svg';
 const heartFillIcon = '/icons/heart-fill.svg';
@@ -12,11 +13,8 @@ interface CardProps {
   pblanc_no: string;
   house_manage_no: string;
   liked: boolean;
-  onLikeClick: (
-    pblancNo: string,
-    houseManageNo: string,
-    isLiked: boolean
-  ) => Promise<void>;
+  userId: number; // 사용자 ID를 받아오기 위해 추가
+  fetchHousings: () => Promise<void>; // fetchHousings 추가
 }
 
 const Card: React.FC<CardProps> = ({
@@ -27,14 +25,38 @@ const Card: React.FC<CardProps> = ({
   pblanc_no,
   house_manage_no,
   liked,
-  onLikeClick,
+  userId,
+  fetchHousings, // fetchHousings props 사용
 }) => {
   const [isLiked, setIsLiked] = useState(liked);
 
+  // 찜 추가/삭제 함수
   const handleHeartClick = async () => {
-    // async 추가
-    await onLikeClick(pblanc_no, house_manage_no, isLiked);
-    setIsLiked(!isLiked);
+    try {
+      if (!isLiked) {
+        // 찜 추가 요청
+        await axios.post('http://localhost:8080/api/v1/likes', null, {
+          params: {
+            userId,
+            pblancNo: pblanc_no,
+            houseManageNo: house_manage_no,
+          },
+        });
+      } else {
+        // 찜 삭제 요청
+        await axios.delete('http://localhost:8080/api/v1/likes', {
+          params: {
+            userId,
+            pblancNo: pblanc_no,
+            houseManageNo: house_manage_no,
+          },
+        });
+      }
+      setIsLiked(!isLiked); // 로컬 상태 업데이트
+      await fetchHousings(); // 최신화 위해 데이터 다시 가져오기
+    } catch (error) {
+      console.error('찜하기 처리 실패:', error);
+    }
   };
 
   return (
