@@ -9,6 +9,9 @@ interface CardProps {
   scale: string;
   apartmentName: string;
   address: string;
+  pblanc_no: String;
+  house_manage_no: String;
+  liked: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -16,8 +19,11 @@ const Card: React.FC<CardProps> = ({
   scale,
   apartmentName,
   address,
+  pblanc_no,
+  house_manage_no,
+  liked,
 }) => {
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(liked);
 
   const handleHeartClick = () => {
     setIsLiked(!isLiked);

@@ -5,14 +5,13 @@ import GoalCard from '@/components/GoalCard';
 import country from '/icons/country.svg';
 import metropolitan from '/icons/metropolitan.svg';
 import city from '/icons/city.svg';
-import test1 from '/icons/access-1.svg';
-import test2 from '/icons/access-10.svg';
-import test3 from '/icons/access-50.svg';
+import test1 from '/icons/country-c.svg';
+import test2 from '/icons/metropolitan-c.svg';
+import test3 from '/icons/city-c.svg';
 
 interface GoalSelectionProps {
   selectedArea: string;
   subscriptionAmount: number;
-  onDeficitChange: (deficit: number) => void;
 }
 
 const regions = [
@@ -46,7 +45,7 @@ const GoalSelection: React.FC<GoalSelectionProps> = ({ selectedArea, subscriptio
           if (!isActive && (lowestDeficit === 0 || deficit < lowestDeficit)) {
             lowestDeficit = deficit;
           }
-
+          
           return (
             <GoalCard
               key={index}

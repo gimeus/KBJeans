@@ -28,7 +28,7 @@ const MessageContainer = styled.div`
   height: 34px;
   color: white;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
 `;
 
 const MessageContent = styled.div`
@@ -38,8 +38,8 @@ const MessageContent = styled.div`
 
 const Tail = styled.img`
   position: absolute;
-  bottom: -10px; /* 꼬리 위치 조정 */
-  right: 12px; /* 꼬리 위치 조정 */
+  bottom: -10px;
+  right: 12px;
   width: 20px;
   height: auto;
 `;

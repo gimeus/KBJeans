@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import HeaderMain from '@/components/HeaderMain';
-import HeaderSearch from '@/components/HeaderSearch';
+import KakaoMap from '@/components/KakaoMap';
 
 const InformationMap = () => {
   return (
     <Container>
       <HeaderMain />
-      <HeaderSearch />
+      <KakaoMap/>
     </Container>
   );
 };
