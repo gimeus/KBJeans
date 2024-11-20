@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import HeaderMain from '@/components/HeaderMain';
 import HeaderSub from '@/components/HeaderSub';
@@ -6,84 +6,58 @@ import Tab2 from '@/components/Tab(2)';
 import Badge from '@/components/Badge';
 import PaymentCard from '@/components/PaymentCard';
 import TotalAmount from '@/components/TotalAmount';
+import { fetchBadges } from '@/api/userApi'; // API 호출 함수
 
 const StatusInfoPage = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const [badges, setBadges] = useState([]);
 
-  const [badges, setBadges] = useState([
-    {
-      icon: '/icons/access-1.svg',
-      title: '첫 발걸음',
-      date: '2023.01.14',
-      isActive: true,
-    },
-    {
-      icon: '/icons/access-10.svg',
-      title: '꾸준한 관심',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/access-50.svg',
-      title: '청약 마스터',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/access-100.svg',
-      title: '명예의 전당',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/bookmark-1.svg',
-      title: '첫 관심 등록',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/bookmark-10.svg',
-      title: '꾸준한 관심자',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/bookmark-50.svg',
-      title: '정보 애호가',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/bookmark-100.svg',
-      title: '정보 수집가',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/savings-1.svg',
-      title: '첫 저축',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/savings-10.svg',
-      title: '저축의 시작',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/savings-50.svg',
-      title: '꾸준한 저축가',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/savings-100.svg',
-      title: '저축의 달인',
-      date: '-',
-      isActive: false,
-    },
-  ]);
+  useEffect(() => {
+    const loadBadges = async () => {
+      try {
+        const userId = 1; // 예제 사용자 ID
+        const response = await fetchBadges(userId);
+
+        // badgeNumber를 기반으로 아이콘 번호를 결정하는 함수
+        const getBadgeIconNumber = (badgeNumber: number): string => {
+          if ([1, 5, 9].includes(badgeNumber)) {
+            return '1';
+          } else if ([2, 6, 10].includes(badgeNumber)) {
+            return '10';
+          } else if ([3, 7, 11].includes(badgeNumber)) {
+            return '50';
+          } else if ([4, 8, 12].includes(badgeNumber)) {
+            return '100';
+          }
+          return 'default'; // 기본값 설정 (필요 시)
+        };
+
+        // `ownedBadges`와 `unownedBadges`를 합쳐 상태 업데이트
+        const combinedBadges = [
+          ...response.ownedBadges.map((badge) => ({
+            icon: `/icons/access-${getBadgeIconNumber(badge.badgeNumber)}.svg`,
+            title: badge.badgeName,
+            date: badge.receiveDate || '-',
+            isActive: true,
+          })),
+          ...response.unownedBadges.map((badge) => ({
+            icon: '/icons/badge-more.svg', // 비활성화된 뱃지 기본 아이콘
+            title: badge.badgeName,
+            date: '-', // date를 항상 '-'로 설정
+            isActive: false,
+          })),
+        ];
+        
+        
+
+        setBadges(combinedBadges);
+      } catch (error) {
+        console.error('Failed to fetch badges:', error);
+      }
+    };
+
+    loadBadges();
+  }, []);
 
   const handleTabChange = (index: number) => {
     setActiveTab(index);
@@ -126,7 +100,7 @@ const StatusInfoPage = () => {
               {badges.map((badge, index) => (
                 <Badge
                   key={index}
-                  icon={badge.isActive ? badge.icon : '/icons/badge-more.svg'}
+                  icon={badge.icon}
                   title={badge.title}
                   date={badge.date}
                   isActive={badge.isActive}
