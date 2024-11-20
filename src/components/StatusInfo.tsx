@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const badgeIcon = '/icons/badge.svg';
@@ -13,8 +14,15 @@ const StatusInfo: React.FC<StatusInfoProps> = ({
   badgeCount,
   subscriptionAmount,
 }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/status-info');
+  };
+
   return (
-    <Container>
+    <Container onClick={handleClick}>
+      {' '}
       <Icon src={badgeIcon} alt="Badge Icon" />
       <Text>{badgeCount}개</Text>
       <Icon src={walletIcon} alt="Wallet Icon" />
@@ -35,6 +43,7 @@ const Container = styled.div`
   border-radius: 23px;
   border: 0.25px solid var(--n30);
   box-shadow: 0px 0px 4px 0px rgba(67, 115, 244, 0.1);
+  cursor: pointer;
 `;
 
 const Icon = styled.img`
