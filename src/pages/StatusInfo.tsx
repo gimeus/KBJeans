@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import HeaderMain from '@/components/HeaderMain';
 import HeaderSub from '@/components/HeaderSub';
@@ -6,84 +6,79 @@ import Tab2 from '@/components/Tab(2)';
 import Badge from '@/components/Badge';
 import PaymentCard from '@/components/PaymentCard';
 import TotalAmount from '@/components/TotalAmount';
+import { fetchDepositsByAccountId } from '@/api/accountApi'; // API 호출 함수
+import { fetchBadges } from '@/api/userApi'; // API 호출 함수
 
 const StatusInfoPage = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const [badges, setBadges] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [totalAmount, setTotalAmount] = useState(0);
 
-  const [badges, setBadges] = useState([
-    {
-      icon: '/icons/access-1.svg',
-      title: '첫 발걸음',
-      date: '2023.01.14',
-      isActive: true,
-    },
-    {
-      icon: '/icons/access-10.svg',
-      title: '꾸준한 관심',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/access-50.svg',
-      title: '청약 마스터',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/access-100.svg',
-      title: '명예의 전당',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/bookmark-1.svg',
-      title: '첫 관심 등록',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/bookmark-10.svg',
-      title: '꾸준한 관심자',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/bookmark-50.svg',
-      title: '정보 애호가',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/bookmark-100.svg',
-      title: '정보 수집가',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/savings-1.svg',
-      title: '첫 저축',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/savings-10.svg',
-      title: '저축의 시작',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/savings-50.svg',
-      title: '꾸준한 저축가',
-      date: '-',
-      isActive: false,
-    },
-    {
-      icon: '/icons/savings-100.svg',
-      title: '저축의 달인',
-      date: '-',
-      isActive: false,
-    },
-  ]);
+  useEffect(() => {
+    // 뱃지 데이터 로드
+    const loadBadges = async () => {
+      try {
+        const userId = 1; // 예제 사용자 ID
+        const response = await fetchBadges(userId);
+    
+        const combinedBadges = [
+          ...response.ownedBadges.map((badge) => ({
+            icon: `/icons/${getBadgeIconFileName(badge.badgeNumber)}`,
+            title: badge.badgeName,
+            date: badge.receiveDate || '-',
+            isActive: true,
+          })),
+          ...response.unownedBadges.map((badge) => ({
+            icon: '/icons/badge-more.svg', // 비활성화된 뱃지 기본 아이콘
+            title: badge.badgeName,
+            date: '-', // date를 항상 '-'로 설정
+            isActive: false,
+          })),
+        ];
+    
+        setBadges(combinedBadges);
+      } catch (error) {
+        console.error('Failed to fetch badges:', error);
+      }
+    };
+
+    const getBadgeIconFileName = (badgeNumber: number): string => {
+      // 카테고리 매핑
+      const categories = ['access', 'savings', 'bookmark'];
+    
+      // 배지 번호를 기준으로 카테고리와 숫자 결정
+      const categoryIndex = Math.floor((badgeNumber - 1) / 4); // 카테고리 결정 (0: access, 1: savings, 2: bookmark)
+      const iconNumber = [1, 10, 50, 100][(badgeNumber - 1) % 4]; // 배지 번호에 따라 숫자 결정
+    
+      // 파일 이름 생성
+      return `${categories[categoryIndex]}-${iconNumber}.svg`;
+    };
+
+    // 납입 데이터 로드
+    const loadPayments = async () => {
+      try {
+        const accountId = 1; // 예제 계좌 ID
+        const response = await fetchDepositsByAccountId(accountId);
+
+        const total = response.reduce((sum: number, payment: any) => sum + payment.depositAmount, 0);
+        setTotalAmount(total);
+
+        const formattedPayments = response.map((payment: any) => ({
+          date: payment.depositDate,
+          description: `${payment.depositId}회차`, // 회차를 예제로 표시
+          amount: payment.depositAmount,
+        }));
+
+        setPayments(formattedPayments);
+      } catch (error) {
+        console.error('Failed to fetch payments:', error);
+      }
+    };
+
+    loadBadges();
+    loadPayments();
+  }, []);
 
   const handleTabChange = (index: number) => {
     setActiveTab(index);
@@ -101,14 +96,10 @@ const StatusInfoPage = () => {
       <Content>
         {activeTab === 0 && (
           <>
-            <TotalAmount totalAmount={150000} />
+            <TotalAmount totalAmount={totalAmount} />
             <PaymentHistorySection>
               <PaymentHistory>
-                {[
-                  { date: '11. 01', description: '3회차', amount: 50000 },
-                  { date: '10. 01', description: '2회차', amount: 50000 },
-                  { date: '09. 01', description: '1회차', amount: 50000 },
-                ].map((payment, index) => (
+                {payments.map((payment, index) => (
                   <PaymentCard
                     key={index}
                     date={payment.date}
@@ -126,7 +117,7 @@ const StatusInfoPage = () => {
               {badges.map((badge, index) => (
                 <Badge
                   key={index}
-                  icon={badge.isActive ? badge.icon : '/icons/badge-more.svg'}
+                  icon={badge.icon}
                   title={badge.title}
                   date={badge.date}
                   isActive={badge.isActive}
@@ -141,6 +132,7 @@ const StatusInfoPage = () => {
 };
 
 export default StatusInfoPage;
+
 
 const Wrapper = styled.div`
   display: flex;
