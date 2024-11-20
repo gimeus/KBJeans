@@ -9,9 +9,14 @@ interface CardProps {
   scale: string;
   apartmentName: string;
   address: string;
-  pblanc_no: String;
-  house_manage_no: String;
+  pblanc_no: string;
+  house_manage_no: string;
   liked: boolean;
+  onLikeClick: (
+    pblancNo: string,
+    houseManageNo: string,
+    isLiked: boolean
+  ) => Promise<void>;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -22,10 +27,13 @@ const Card: React.FC<CardProps> = ({
   pblanc_no,
   house_manage_no,
   liked,
+  onLikeClick,
 }) => {
   const [isLiked, setIsLiked] = useState(liked);
 
-  const handleHeartClick = () => {
+  const handleHeartClick = async () => {
+    // async 추가
+    await onLikeClick(pblanc_no, house_manage_no, isLiked);
     setIsLiked(!isLiked);
   };
 
