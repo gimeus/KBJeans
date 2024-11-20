@@ -9,6 +9,8 @@ import Notification from '../pages/Notification.tsx';
 import Home from '../pages/Home.tsx';
 import Search from '../pages/Search.tsx';
 import ApplyScore from '../pages/ApplyScore.tsx';
+import Score from '../pages/Score.tsx';
+import StatusInfo from '../pages/StatusInfo.tsx';
 
 function Router() {
   return (
@@ -22,7 +24,9 @@ function Router() {
       <Route path="/information-map" element={<InformationMap />} />
       <Route path="/notification" element={<Notification />} />
       <Route path="/search" element={<Search />} />
-      \ <Route path="/apply-score" element={<ApplyScore />} />
+      <Route path="/apply-score" element={<ApplyScore />} />
+      <Route path="/score" element={<Score />} />
+      <Route path="/status-info" element={<StatusInfo />} />
     </Routes>
   );
 }
