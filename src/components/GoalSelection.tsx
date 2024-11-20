@@ -5,14 +5,13 @@ import GoalCard from '@/components/GoalCard';
 import country from '/icons/country.svg';
 import metropolitan from '/icons/metropolitan.svg';
 import city from '/icons/city.svg';
-import test1 from '/icons/access-1.svg';
-import test2 from '/icons/access-10.svg';
-import test3 from '/icons/access-50.svg';
+import test1 from '/icons/country-c.svg';
+import test2 from '/icons/metropolitan-c.svg';
+import test3 from '/icons/city-c.svg';
 
 interface GoalSelectionProps {
   selectedArea: string;
   subscriptionAmount: number;
-  onDeficitChange: (deficit: number) => void;
 }
 
 const regions = [
@@ -28,22 +27,23 @@ const areaDepositLimits = {
   '모든 면적': [5000000, 10000000, 15000000],
 };
 
-const GoalSelection: React.FC<GoalSelectionProps> = ({ selectedArea, subscriptionAmount , onDeficitChange}) => {
-  // 현재 선택된 희망 면적의 최소 예치금
-  const requiredDeposit = areaDepositLimits[selectedArea];
-  let lowestDeficit = 0; // 최소 부족 금액 계산
+const GoalSelection: React.FC<GoalSelectionProps> = ({
+  selectedArea,
+  subscriptionAmount,
+}) => {
+  // 선택된 면적의 최소 예치금을 안전하게 가져오기
+  const requiredDeposit = areaDepositLimits[selectedArea] || []; // 기본값 설정
 
   return (
     <Wrapper>
       <CardGroup>
         {regions.map((region, index) => {
-          const deficit = requiredDeposit[index] - subscriptionAmount;
-          const isActive = deficit <= 0;
+          // requiredDeposit이 유효한지 확인 후 계산
+          const isActive =
+            requiredDeposit[index] !== undefined
+              ? subscriptionAmount >= requiredDeposit[index]
+              : false;
 
-          // 가장 작은 부족 금액 업데이트
-          if (!isActive && (lowestDeficit === 0 || deficit < lowestDeficit)) {
-            lowestDeficit = deficit;
-          }
           return (
             <GoalCard
               key={index}
@@ -53,7 +53,6 @@ const GoalSelection: React.FC<GoalSelectionProps> = ({ selectedArea, subscriptio
           );
         })}
       </CardGroup>
-      {onDeficitChange(lowestDeficit > 0 ? lowestDeficit : 0)}
     </Wrapper>
   );
 };
