@@ -80,7 +80,7 @@ onMessage(messaging, (payload) => {
   if (Notification.permission === 'granted' && title && body) {
     // 브라우저 알림 API를 사용하여 알림 생성
     new Notification(title, {
-      body: body.substring(0, 20) + '...',
+      body: body.length > 20 ? body.substring(0, 20) + '...' : body,
       icon: '/icons/firebase-logo.svg', // 알림에 표시될 아이콘
       badge: '/icons/firebase-logo.svg',
     });

@@ -1,34 +1,13 @@
+// src/pages/Notification.tsx
 import styled from 'styled-components';
 import HeaderMain from '@/components/HeaderMain';
 import HeaderSub from '@/components/HeaderSub';
 import NotificationCard from '@/components/NotificationCard';
-
-// 더미 데이터 정의
-const notifications = [
-  {
-    notificationId: 1,
-    title: '청약 마감일 하루 전입니다!',
-    houseName: 'VIORR(비오르)',
-    createdAt: '2024-11-18T10:30:00',
-    isRead: false,
-  },
-  {
-    notificationId: 2,
-    title: '무순위 청약 신청일이 내일입니다!',
-    houseName: '이문월드메르디앙 힐트리움 더테라스',
-    createdAt: '2024-11-17T08:15:00',
-    isRead: true,
-  },
-  {
-    notificationId: 3,
-    title: '청약이 시작되었습니다!',
-    houseName: '이문월드메르디앙 힐트리움 더테라스',
-    createdAt: '2024-11-17T12:00:00',
-    isRead: false,
-  },
-];
+import { useNotifications } from '@/hooks/useNotification';
 
 const Notification = () => {
+  const { notifications, markAsRead } = useNotifications();
+
   return (
     <PageWrapper>
       <HeaderMain />
@@ -37,10 +16,12 @@ const Notification = () => {
         {notifications.map((notification) => (
           <NotificationCard
             key={notification.notificationId}
+            notificationId={notification.notificationId} // prop 추가
             title={notification.title}
-            houseName={notification.houseName}
+            message={notification.message}
             createdAt={notification.createdAt}
             isRead={notification.isRead}
+            onRead={markAsRead} // prop 추가
           />
         ))}
       </Content>
