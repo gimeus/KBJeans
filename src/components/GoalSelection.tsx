@@ -27,23 +27,25 @@ const areaDepositLimits = {
   '모든 면적': [5000000, 10000000, 15000000],
 };
 
-const GoalSelection: React.FC<GoalSelectionProps> = ({
-  selectedArea,
-  subscriptionAmount,
-}) => {
-  // 선택된 면적의 최소 예치금을 안전하게 가져오기
-  const requiredDeposit = areaDepositLimits[selectedArea] || []; // 기본값 설정
+const GoalSelection: React.FC<GoalSelectionProps> = ({ selectedArea, subscriptionAmount, onDeficitChange }) => {
+  // 현재 선택된 희망 면적의 최소 예치금을 안전하게 가져오기
+  const requiredDeposit = areaDepositLimits[selectedArea] || []; // 기본값으로 빈 배열 설정
+  let lowestDeficit = 0; // 최소 부족 금액 계산
 
   return (
     <Wrapper>
       <CardGroup>
         {regions.map((region, index) => {
-          // requiredDeposit이 유효한지 확인 후 계산
-          const isActive =
-            requiredDeposit[index] !== undefined
-              ? subscriptionAmount >= requiredDeposit[index]
-              : false;
+          // requiredDeposit[index]가 유효한지 확인 후 계산
+          const depositRequirement = requiredDeposit[index];
+          const deficit = depositRequirement !== undefined ? depositRequirement - subscriptionAmount : Infinity;
+          const isActive = deficit <= 0;
 
+          // 가장 작은 부족 금액 업데이트
+          if (!isActive && (lowestDeficit === 0 || deficit < lowestDeficit)) {
+            lowestDeficit = deficit;
+          }
+          
           return (
             <GoalCard
               key={index}
@@ -53,6 +55,8 @@ const GoalSelection: React.FC<GoalSelectionProps> = ({
           );
         })}
       </CardGroup>
+      {/* 부모 컴포넌트로 최소 부족 금액 전달 */}
+      {onDeficitChange(lowestDeficit > 0 ? lowestDeficit : 0)}
     </Wrapper>
   );
 };
