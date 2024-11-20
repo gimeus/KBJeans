@@ -5,9 +5,9 @@ import GoalCard from '@/components/GoalCard';
 import country from '/icons/country.svg';
 import metropolitan from '/icons/metropolitan.svg';
 import city from '/icons/city.svg';
-import test1 from '/icons/country-c.svg';
-import test2 from '/icons/metropolitan-c.svg';
-import test3 from '/icons/city-c.svg';
+import countryC from '/icons/country-c.svg';
+import metropolitanC from '/icons/metropolitan-c.svg';
+import cityC from '/icons/city-c.svg';
 
 interface GoalSelectionProps {
   selectedArea: string;
@@ -15,9 +15,9 @@ interface GoalSelectionProps {
 }
 
 const regions = [
-  { label: '그 외 지역', activeImage: country, inactiveImage: test1 },
-  { label: '기타 광역시', activeImage: metropolitan, inactiveImage: test2 },
-  { label: '서울/부산', activeImage: city, inactiveImage: test3 },
+  { label: '그 외 지역', activeImage: countryC, inactiveImage: country },
+  { label: '기타 광역시', activeImage: metropolitanC, inactiveImage: metropolitan },
+  { label: '서울/부산', activeImage: cityC, inactiveImage: city },
 ];
 
 const areaDepositLimits = {

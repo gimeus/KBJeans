@@ -19,3 +19,9 @@ export const fetchBadgeCount = async (userId: number) => {
   const response = await axios.get(`${BASE_URL}/badge-count`, { params: { userId } });
   return response.data;
 };
+
+// API 호출: 보유 뱃지 조회
+export const fetchBadges = async (userId: number) => {
+  const response = await axios.get(`${BASE_URL}/badges`, { params: { userId } });
+  return response.data;
+};
