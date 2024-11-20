@@ -10,19 +10,14 @@ import Message from '@/components/Message';
 import { useState, useEffect } from 'react';
 import { fetchDesiredArea, fetchBadgeCount, updateDesiredArea } from '@/api/userApi';
 import {
-  fetchUserAccounts,
-  incrementDeposit,
-  fetchTotalBalance,
-  fetchDepositsByAccountId,
+  fetchTotalBalance
 } from '@/api/accountApi';
 
 const Home = () => {
   const { selectedArea, depositAmount, setSelectedArea } = useArea();
-  // const subscriptionAmount = 150000;
-  const message = '다음 건물까지 100,000원 예치';
-
   const [subscriptionAmount, setSubscriptionAmount] = useState<number>(0);
   const [badgeCount, setBadgeCount] = useState<number>(0);
+  const [deficit, setDeficit] = useState<number>(0);
 
   const areaOptions = [
     {label: '모든 면적', amount: '500-1500만원 이상 예치' },
@@ -78,6 +73,10 @@ const Home = () => {
     loadData();
   }, []);
 
+  const message = deficit > 0 
+  ? `다음 건물까지 ${deficit.toLocaleString()}원 예치`
+  : '모든 목표를 달성했습니다!';
+
   return (
     <Wrapper>
       <HeaderMain backgroundColor="#D0F0FE" />
@@ -112,6 +111,7 @@ const Home = () => {
             <GoalSelection 
               selectedArea={selectedArea}
               subscriptionAmount={subscriptionAmount}
+              onDeficitChange={setDeficit}
             />
           </Group>
         </MainContentGroup>
