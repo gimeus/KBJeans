@@ -12,6 +12,7 @@ import test3 from '/icons/access-50.svg';
 interface GoalSelectionProps {
   selectedArea: string;
   subscriptionAmount: number;
+  onDeficitChange: (deficit: number) => void;
 }
 
 const regions = [
@@ -27,17 +28,22 @@ const areaDepositLimits = {
   '모든 면적': [5000000, 10000000, 15000000],
 };
 
-const GoalSelection: React.FC<GoalSelectionProps> = ({ selectedArea, subscriptionAmount }) => {
+const GoalSelection: React.FC<GoalSelectionProps> = ({ selectedArea, subscriptionAmount , onDeficitChange}) => {
   // 현재 선택된 희망 면적의 최소 예치금
   const requiredDeposit = areaDepositLimits[selectedArea];
+  let lowestDeficit = 0; // 최소 부족 금액 계산
 
   return (
     <Wrapper>
       <CardGroup>
         {regions.map((region, index) => {
-          // 총 예치금이 기준을 초과했는지 여부를 계산
-          const isActive = subscriptionAmount >= requiredDeposit[index];
+          const deficit = requiredDeposit[index] - subscriptionAmount;
+          const isActive = deficit <= 0;
 
+          // 가장 작은 부족 금액 업데이트
+          if (!isActive && (lowestDeficit === 0 || deficit < lowestDeficit)) {
+            lowestDeficit = deficit;
+          }
           return (
             <GoalCard
               key={index}
@@ -47,6 +53,7 @@ const GoalSelection: React.FC<GoalSelectionProps> = ({ selectedArea, subscriptio
           );
         })}
       </CardGroup>
+      {onDeficitChange(lowestDeficit > 0 ? lowestDeficit : 0)}
     </Wrapper>
   );
 };
