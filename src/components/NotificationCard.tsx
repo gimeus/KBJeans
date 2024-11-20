@@ -7,22 +7,29 @@ dayjs.extend(relativeTime);
 dayjs.locale('ko');
 
 interface NotificationCardProps {
+  notificationId: number;
   title: string;
-  houseName: string;
+  message: string;
   createdAt: string;
   isRead: boolean;
+  onRead: (id: number) => void;
 }
 
 const NotificationCard: React.FC<NotificationCardProps> = ({
+  notificationId,
   title,
-  houseName,
+  message,
   createdAt,
   isRead,
+  onRead,
 }) => {
   return (
-    <CardContainer isRead={isRead}>
+    <CardContainer
+      $isRead={isRead}
+      onClick={() => !isRead && onRead(notificationId)} // 읽지 않은 경우에만 클릭 이벤트 발생
+    >
       <CardTitle>{title}</CardTitle>
-      <HouseName>{houseName}</HouseName>
+      <HouseName>{message}</HouseName>
       <CardTime>{dayjs(createdAt).format('YYYY. MM. DD')}</CardTime>
     </CardContainer>
   );
@@ -30,8 +37,8 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
 
 export default NotificationCard;
 
-const CardContainer = styled.div<{ isRead: boolean }>`
-  background-color: ${({ isRead }) => (isRead ? 'var(--g60)' : 'var(--n25)')};
+const CardContainer = styled.div<{ $isRead: boolean }>`
+  background-color: ${({ $isRead }) => ($isRead ? 'var(--n25)' : 'var(--g60)')};
   border-radius: 10px;
   padding: 18px;
   display: flex;

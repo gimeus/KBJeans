@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { fetchHousingAnnouncements } from '@/api/housingApi';
 
 interface OfferBannerProps {
   label: string;
@@ -20,29 +21,65 @@ const OfferBanner: React.FC<OfferBannerProps> = ({ label, text }) => {
 };
 
 const OfferBannerContainer = () => {
-  const dummyData = [
-    { label: 'NEW', text: '다산 센트럴파크단지 영구임대주택' },
-    { label: 'NEW', text: '서울 강남구 청담동 신축 아파트' },
-    { label: 'NEW', text: '용인 수지구 오피스텔 특별 분양' },
-  ];
 
+  const [bannerData, setBannerData] = useState<{ label: string; text: string }[]>(
+    []
+  );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % dummyData.length);
-      setIsTransitioning(true);
-      setTimeout(() => setIsTransitioning(false), 500);
-    }, 3000);
+    const loadBannerData = async () => {
+      try {
+        const userId = 1; // 예제 사용자 ID
+        const page = 1;
+        const pageSize = 3;
 
-    return () => clearInterval(interval);
+        const data = await fetchHousingAnnouncements(page, pageSize, userId);
+        
+        // API 결과에서 house_nm 값만 추출하여 bannerData로 설정
+        const transformedData = data.data.map((house: { house_nm: string }) => ({
+          label: 'NEW',
+          text: house.house_nm,
+        }));
+
+        setBannerData(transformedData);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching banner data:', error);
+        setIsLoading(false);
+      }
+    };
+
+    loadBannerData();
   }, []);
+
+  useEffect(() => {
+    if (bannerData.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % bannerData.length);
+        setIsTransitioning(true);
+        setTimeout(() => setIsTransitioning(false), 500);
+      }, 3000);
+
+      return () => clearInterval(interval);
+    }
+  }, [bannerData]);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (bannerData.length === 0) {
+    return <p>No data available</p>;
+  }
 
   return (
     <OfferBanner
-      label={dummyData[currentIndex].label}
-      text={dummyData[currentIndex].text}
+      label={bannerData[currentIndex].label}
+      text={bannerData[currentIndex].text}
       currentIndex={currentIndex}
       isTransitioning={isTransitioning}
     />
