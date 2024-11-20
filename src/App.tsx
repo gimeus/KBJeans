@@ -5,44 +5,52 @@ import { requestFirebaseNotificationPermission } from './firebase'; // Firebase 
 import { AreaProvider } from './context/AreaContext'; // AreaProvider 임포트
 
 const App = () => {
-  // 애플리케이션이 로드될 때 알림 권한 요청
+  // FCM 및 Service Worker 초기화를 위한 useEffect
   useEffect(() => {
-    // 브라우저의 현재 알림 권한 상태 확인
-    if (Notification.permission !== 'granted') {
-      // 권한이 없는 경우, 사용자에게 알림 권한 요청
-      Notification.requestPermission().then((permission) => {
-        if (permission === 'granted') {
-          // 사용자가 권한을 허용한 경우
-          console.log('Notification permission granted.');
-          // FCM 토큰 요청
-          requestFirebaseNotificationPermission()
-            .then(() => {
-              console.log('FCM 토큰이 성공적으로 요청되었습니다.');
-            })
-            .catch((err) => {
-              console.error('FCM 토큰 요청 실패: ', err);
-            });
-        } else {
-          // 사용자가 권한을 거부하거나 기본 상태인 경우
-          console.warn('Notification permission denied or set to default.');
+    const initializeNotifications = async () => {
+      try {
+        // 브라우저의 Service Worker 지원 여부 확인
+        if (!('serviceWorker' in navigator)) {
+          console.log('이 브라우저는 Service Worker를 지원하지 않습니다.');
+          return;
         }
-      });
-    } else {
-      // 이미 알림 권한이 허용된 경우, FCM 토큰 직접 요청
-      requestFirebaseNotificationPermission()
-        .then(() => {
-          console.log('FCM 토큰이 성공적으로 요청되었습니다.');
-        })
-        .catch((err) => {
-          console.error('FCM 토큰 요청 실패: ', err);
-        });
-    }
-  }, []); // 빈 의존성 배열로 컴포넌트 마운트 시 한 번만 실행
+
+        // Service Worker 등록
+        const registration = await navigator.serviceWorker.register(
+          '/firebase-messaging-sw.js'
+        );
+        console.log(
+          'Service Worker가 다음 범위로 등록됨 : ',
+          registration.scope
+        );
+
+        // 알림 권한 상태 확인 및 처리
+        if (Notification.permission === 'granted') {
+          // 이미 권한이 있는 경우 FCM 토큰 요청
+          await requestFirebaseNotificationPermission();
+          console.log('기존 알림 권한으로 FCM 토큰 요청 완료');
+        } else {
+          // 권한이 없는 경우 권한 요청
+          const permission = await Notification.requestPermission();
+          if (permission === 'granted') {
+            // 권한을 받은 경우 FCM 토큰 요청
+            await requestFirebaseNotificationPermission();
+            console.log('새로운 알림 권한으로 FCM 토큰 요청 완료');
+          } else {
+            console.log('알림 권한이 거부되었습니다.');
+          }
+        }
+      } catch (error) {
+        console.error('알림 초기화 중 오류 발생 :', error);
+      }
+    };
+
+    // 컴포넌트 마운트 시 초기화 함수 실행
+    initializeNotifications();
+  }, []); // 빈 의존성 배열로 최초 1회만 실행
 
   return (
     <AreaProvider>
-      {' '}
-      {/* AreaProvider로 전체 감싸기 */}
       <div className="app-container">
         <Router />
       </div>

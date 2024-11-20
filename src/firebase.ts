@@ -28,20 +28,24 @@ export const requestFirebaseNotificationPermission = async () => {
     // 웹 푸시 알림을 위한 VAPID 키 설정
     const vapidKey = import.meta.env.VITE_FIREBASE_VAPID_KEY;
 
-    // 명시적으로 등록한 Service Worker를 참조
-    // const registration = await navigator.serviceWorker.ready;
+    // const token = await getToken(messaging, vapidKey);
 
-    // FCM 토큰 요청 시 명시적으로 등록한 Service Worker 사용
-    // const token = await getToken(messaging, {
-    //   vapidKey,
-    //   serviceWorkerRegistration: registration,
-    // });
-    const token = await getToken(messaging, vapidKey);
+    // Service Worker 등록 상태 확인, 준비될 때까지 대기
+    const registration = await navigator.serviceWorker.ready;
 
+    // FCM 토큰 요청
+    // vapidKey와 서비스 워커 등록 정보를 포함하여 요청
+    const token = await getToken(messaging, {
+      vapidKey,
+      serviceWorkerRegistration: registration,
+    });
+
+    // 토큰이 성공적으로 생성된 경우
     if (token) {
       console.log('Firebase FCM Token:', token);
 
       // 백엔드 서버로 FCM 토큰 전송
+      // 서버는 이 토큰을 저장하고 나중에 알림을 보낼 때 사용
       await axios.post(
         'http://localhost:8080/api/v1/notifications/token',
         {
@@ -53,34 +57,35 @@ export const requestFirebaseNotificationPermission = async () => {
           },
         }
       );
-      // 토큰을 받지 못한 경우
-      console.log('FCM Token has been sent to the server.');
+      console.log('FCM Token이 성공적으로 전송되었습니다.');
     } else {
-      console.log(
-        'No registration token available. Request permission to generate one.'
-      );
+      console.log('사용 가능한 Token이 없습니다.');
     }
   } catch (err) {
-    console.error('An error occurred while retrieving token: ', err);
+    console.error('Token 검색 중 오류가 발생했습니다 : ', err);
   }
 };
 
-// 포그라운드 상태에서 메시지를 수신했을 때의 핸들러
+// 포그라운드 상태(앱이 활성화된 상태)에서 메시지를 수신했을 때의 핸들러
 onMessage(messaging, (payload) => {
   console.log('[React] 포그라운드 메시지 수신: ', payload);
 
-  // 알림 데이터의 안전한 접근을 위한 옵셔널 체이닝
+  // 알림 데이터를 안전하게 추출 (옵셔널 체이닝 사용)
   const title = payload.notification?.title;
   const body = payload.notification?.body;
 
   console.log(title, body);
-  // 알림 권한이 있고 필요한 데이터가 있는 경우에만 알림 표시
+
+  // 알림 권한이 허용되어 있고, 제목과 내용이 있는 경우에만 알림 표시
   if (Notification.permission === 'granted' && title && body) {
+    // 브라우저 알림 API를 사용하여 알림 생성
     new Notification(title, {
-      body,
+      body: body.substring(0, 20) + '...',
       icon: '/icons/firebase-logo.svg', // 알림에 표시될 아이콘
+      badge: '/icons/firebase-logo.svg',
     });
   }
 });
 
+// Firebase 앱 인스턴스를 다른 파일에서 사용할 수 있도록 export
 export default app;
