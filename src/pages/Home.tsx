@@ -7,28 +7,76 @@ import Select from '@/components/Select';
 import { useArea } from '@/context/AreaContext';
 import GoalSelection from '@/components/GoalSelection';
 import Message from '@/components/Message';
+import { useState, useEffect } from 'react';
+import { fetchDesiredArea, fetchBadgeCount, updateDesiredArea } from '@/api/userApi';
+import {
+  fetchUserAccounts,
+  incrementDeposit,
+  fetchTotalBalance,
+  fetchDepositsByAccountId,
+} from '@/api/accountApi';
 
 const Home = () => {
   const { selectedArea, depositAmount, setSelectedArea } = useArea();
-  const badgeCount = 1;
-  const subscriptionAmount = 150000;
+  // const subscriptionAmount = 150000;
   const message = '다음 건물까지 100,000원 예치';
 
+  const [subscriptionAmount, setSubscriptionAmount] = useState<number>(0);
+  const [badgeCount, setBadgeCount] = useState<number>(0);
+
   const areaOptions = [
+    {label: '모든 면적', amount: '500-1500만원 이상 예치' },
     { label: '85㎡ 이하 (32평)', amount: '200-300만원 이상 예치' },
     { label: '102㎡ 이하 (39평)', amount: '300-600만원 이상 예치' },
     { label: '135㎡ 이하 (51평)', amount: '400-1000만원 이상 예치' },
-    { label: '모든 면적', amount: '500-1500만원 이상 예치' },
   ];
 
-  const handleSelectChange = (selectedLabel: string) => {
+  // 희망 면적 선택 변경 핸들러
+  const handleSelectChange = async (selectedLabel: string) => {
     const selectedOption = areaOptions.find(
       (option) => option.label === selectedLabel
     );
     if (selectedOption) {
       setSelectedArea(selectedLabel, selectedOption.amount);
+
+      try {
+        const userId = 1; // 예제 사용자 ID
+        const desiredAreaIndex = areaOptions.indexOf(selectedOption);
+
+        // 서버에 업데이트 요청
+        await updateDesiredArea(userId, desiredAreaIndex);
+        console.log('희망 면적 업데이트 완료');
+      } catch (error) {
+        console.error('희망 면적 업데이트 실패:', error);
+      }
     }
   };
+
+  useEffect(() => {
+    const loadData = async () => {
+      const userId = 1; // 예시 사용자 ID
+      try {
+        const badges = await fetchBadgeCount(userId);
+        setBadgeCount(badges);
+
+        const depositAmount = await fetchTotalBalance(userId);
+        setSubscriptionAmount(depositAmount); 
+        
+        // 희망 면적 데이터 가져오기
+        const desiredAreaResponse = await fetchDesiredArea(userId);
+        const { desiredArea } = desiredAreaResponse; // API의 desiredArea 필드
+        if (desiredArea >= 0 && desiredArea < areaOptions.length) {
+          const selectedOption = areaOptions[desiredArea];
+          setSelectedArea(selectedOption.label, selectedOption.amount);
+        }
+      } 
+      catch (error) {
+        console.error('Error loading data:', error);
+      }
+    };
+
+    loadData();
+  }, []);
 
   return (
     <Wrapper>
@@ -61,7 +109,10 @@ const Home = () => {
           </Group>
           <Group>
             <SectionTitle>청약 지역 달성율</SectionTitle>
-            <GoalSelection />
+            <GoalSelection 
+              selectedArea={selectedArea}
+              subscriptionAmount={subscriptionAmount}
+            />
           </Group>
         </MainContentGroup>
       </ContentGroup>
