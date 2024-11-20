@@ -8,24 +8,23 @@ import { useArea } from '@/context/AreaContext';
 import GoalSelection from '@/components/GoalSelection';
 import Message from '@/components/Message';
 import { useState, useEffect } from 'react';
-import { fetchDesiredArea, fetchBadgeCount, updateDesiredArea } from '@/api/userApi';
 import {
-  fetchUserAccounts,
-  incrementDeposit,
-  fetchTotalBalance,
-  fetchDepositsByAccountId,
+  fetchDesiredArea,
+  fetchBadgeCount,
+  updateDesiredArea,
+} from '@/api/userApi';
+import {
+  fetchTotalBalance
 } from '@/api/accountApi';
 
 const Home = () => {
   const { selectedArea, depositAmount, setSelectedArea } = useArea();
-  // const subscriptionAmount = 150000;
-  const message = '다음 건물까지 100,000원 예치';
-
   const [subscriptionAmount, setSubscriptionAmount] = useState<number>(0);
   const [badgeCount, setBadgeCount] = useState<number>(0);
+  const [deficit, setDeficit] = useState<number>(0);
 
   const areaOptions = [
-    {label: '모든 면적', amount: '500-1500만원 이상 예치' },
+    { label: '모든 면적', amount: '500-1500만원 이상 예치' },
     { label: '85㎡ 이하 (32평)', amount: '200-300만원 이상 예치' },
     { label: '102㎡ 이하 (39평)', amount: '300-600만원 이상 예치' },
     { label: '135㎡ 이하 (51평)', amount: '400-1000만원 이상 예치' },
@@ -60,8 +59,8 @@ const Home = () => {
         setBadgeCount(badges);
 
         const depositAmount = await fetchTotalBalance(userId);
-        setSubscriptionAmount(depositAmount); 
-        
+        setSubscriptionAmount(depositAmount);
+
         // 희망 면적 데이터 가져오기
         const desiredAreaResponse = await fetchDesiredArea(userId);
         const { desiredArea } = desiredAreaResponse; // API의 desiredArea 필드
@@ -69,14 +68,17 @@ const Home = () => {
           const selectedOption = areaOptions[desiredArea];
           setSelectedArea(selectedOption.label, selectedOption.amount);
         }
-      } 
-      catch (error) {
+      } catch (error) {
         console.error('Error loading data:', error);
       }
     };
 
     loadData();
   }, []);
+
+  const message = deficit > 0 
+  ? `다음 건물까지 ${deficit.toLocaleString()}원 예치`
+  : '모든 목표를 달성했습니다!';
 
   return (
     <Wrapper>
@@ -109,9 +111,10 @@ const Home = () => {
           </Group>
           <Group>
             <SectionTitle>청약 지역 달성율</SectionTitle>
-            <GoalSelection 
+            <GoalSelection
               selectedArea={selectedArea}
               subscriptionAmount={subscriptionAmount}
+              onDeficitChange={setDeficit}
             />
           </Group>
         </MainContentGroup>
