@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const heartIcon = '/icons/heart.svg';
@@ -12,6 +13,7 @@ interface CardProps {
   address: string;
   pblanc_no: string;
   house_manage_no: string;
+  house_secd: string; // 주택구분코드 추가
   liked: boolean;
   userId: number; // 사용자 ID를 받아오기 위해 추가
   fetchHousings?: () => Promise<void>; // fetchHousings 추가
@@ -24,11 +26,13 @@ const Card: React.FC<CardProps> = ({
   address,
   pblanc_no,
   house_manage_no,
+  house_secd, // 주택구분코드 사용
   liked,
   userId,
   fetchHousings, // fetchHousings props 사용
 }) => {
   const [isLiked, setIsLiked] = useState(liked);
+  const navigate = useNavigate();
 
   // 찜 추가/삭제 함수
   const handleHeartClick = async () => {
@@ -62,15 +66,30 @@ const Card: React.FC<CardProps> = ({
     }
   };
 
+  // 카드 클릭 시 이동 경로 처리
+  const handleCardClick = () => {
+    const navigationPath =
+      house_secd === '01' || house_secd === '10'
+        ? '/information-detail-b'
+        : '/information-detail-a';
+
+    navigate(navigationPath, {
+      state: { pblanc_no, house_manage_no },
+    });
+  };
+
   return (
-    <CardContainer>
+    <CardContainer onClick={handleCardClick}>
       <TagContainer>
         <StatusTag status={status}>{status}</StatusTag>
         <ScaleTag>{scale}</ScaleTag>
         <HeartIcon
           src={isLiked ? heartFillIcon : heartIcon}
           alt="하트"
-          onClick={handleHeartClick}
+          onClick={(e) => {
+            e.stopPropagation(); // 부모 클릭 이벤트 막기
+            handleHeartClick();
+          }}
         />
       </TagContainer>
       <Title>{apartmentName}</Title>

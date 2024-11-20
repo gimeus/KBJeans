@@ -118,6 +118,7 @@ const Information = () => {
                   address={housing.hssply_adres}
                   pblanc_no={housing.pblanc_no}
                   house_manage_no={housing.house_manage_no}
+                  house_secd={housing.house_secd} // 주택구분코드 전달
                   liked={housing.isLiked}
                   userId={1} // 사용자 ID 전달
                   fetchHousings={fetchHousings} // fetchHousings 전달
