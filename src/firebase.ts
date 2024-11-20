@@ -78,7 +78,7 @@ onMessage(messaging, (payload) => {
   if (Notification.permission === 'granted' && title && body) {
     new Notification(title, {
       body,
-      icon: '/icons/firebase-logo.png', // 알림에 표시될 아이콘
+      icon: '/icons/firebase-logo.svg', // 알림에 표시될 아이콘
     });
   }
 });
