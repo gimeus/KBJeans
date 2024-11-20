@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import Card from '@/components/Card';
@@ -102,14 +103,15 @@ const KakaoMap: React.FC = () => {
         return "접수 완료";
       }
     };
+    const navigate = useNavigate();
+
+    const handleBackClick = () => {
+      navigate(-1);
+    };
     const handleLocationClick = (location : Location)=>{
         setSearchTerm("");
         setSelectedLocation(location);
       }
-
-    const handleMarkerClick = (announcement:HousingAnnouncement) =>{
-      setSelectedMarker(announcement);
-    }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const input = e.target.value;
@@ -181,7 +183,7 @@ const KakaoMap: React.FC = () => {
   return (
     <div>
     <Container>
-      <BackIcon src={backIcon} />
+      <BackIcon src={backIcon} onClick={handleBackClick}/>
       <SearchBox>
         <SearchIcon src={searchIcon} />
         <PlaceholderText>
