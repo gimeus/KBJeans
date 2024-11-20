@@ -14,7 +14,7 @@ interface CardProps {
   house_manage_no: string;
   liked: boolean;
   userId: number; // 사용자 ID를 받아오기 위해 추가
-  fetchHousings: () => Promise<void>; // fetchHousings 추가
+  fetchHousings?: () => Promise<void>; // fetchHousings 추가
 }
 
 const Card: React.FC<CardProps> = ({
@@ -53,7 +53,10 @@ const Card: React.FC<CardProps> = ({
         });
       }
       setIsLiked(!isLiked); // 로컬 상태 업데이트
-      await fetchHousings(); // 최신화 위해 데이터 다시 가져오기
+      if (fetchHousings) {
+        // fetchHousings가 존재하는 경우에만 호출
+        await fetchHousings();
+      }
     } catch (error) {
       console.error('찜하기 처리 실패:', error);
     }
