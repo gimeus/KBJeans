@@ -5,9 +5,9 @@ import GoalCard from '@/components/GoalCard';
 import country from '/icons/country.svg';
 import metropolitan from '/icons/metropolitan.svg';
 import city from '/icons/city.svg';
-import test1 from '/icons/access-1.svg';
-import test2 from '/icons/access-10.svg';
-import test3 from '/icons/access-50.svg';
+import test1 from '/icons/country-c.svg';
+import test2 from '/icons/metropolitan-c.svg';
+import test3 from '/icons/city-c.svg';
 
 interface GoalSelectionProps {
   selectedArea: string;
@@ -27,16 +27,22 @@ const areaDepositLimits = {
   '모든 면적': [5000000, 10000000, 15000000],
 };
 
-const GoalSelection: React.FC<GoalSelectionProps> = ({ selectedArea, subscriptionAmount }) => {
-  // 현재 선택된 희망 면적의 최소 예치금
-  const requiredDeposit = areaDepositLimits[selectedArea];
+const GoalSelection: React.FC<GoalSelectionProps> = ({
+  selectedArea,
+  subscriptionAmount,
+}) => {
+  // 선택된 면적의 최소 예치금을 안전하게 가져오기
+  const requiredDeposit = areaDepositLimits[selectedArea] || []; // 기본값 설정
 
   return (
     <Wrapper>
       <CardGroup>
         {regions.map((region, index) => {
-          // 총 예치금이 기준을 초과했는지 여부를 계산
-          const isActive = subscriptionAmount >= requiredDeposit[index];
+          // requiredDeposit이 유효한지 확인 후 계산
+          const isActive =
+            requiredDeposit[index] !== undefined
+              ? subscriptionAmount >= requiredDeposit[index]
+              : false;
 
           return (
             <GoalCard
