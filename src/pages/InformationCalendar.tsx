@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SetStateAction } from 'react';
 import styled from 'styled-components';
 import HeaderMain from '@/components/HeaderMain';
 import HeaderSub from '@/components/HeaderSub';
@@ -6,63 +6,14 @@ import Tab from '@/components/Tab(2)';
 import Calendar from '@/components/Calendar';
 import HeaderCalendar from '@/components/HeaderCalendar';
 import Card from '@/components/Card';
+import axios from 'axios';
 
-const dummyEvents = [
-  {
-    id: 1,
-    title: 'VIORR(비오르)',
-    date: 10,
-    month: 11,
-    year: 2024,
-    category: '2순위',
-    isBookmarked: false,
-    address: '서울특별시 강남구 역삼동',
-    scale: '공급규모 4세대',
-    status: '접수 시작',
-  },
-  {
-    id: 2,
-    title: '이문 월드메르디앙 힐트리움 더 테라스',
-    date: 15,
-    month: 11,
-    year: 2024,
-    category: '특별공급',
-    isBookmarked: true,
-    address: '서울특별시 동대문구 이문동',
-    scale: '공급규모 4세대',
-    status: '접수 예정',
-  },
-  {
-    id: 3,
-    title: '이문 월드메르디앙 힐트리움 더 테라스',
-    date: 20,
-    month: 11,
-    year: 2024,
-    category: '무순위',
-    isBookmarked: false,
-    address: '서울특별시 동대문구 이문동',
-    scale: '공급규모 4세대',
-    status: '접수 종료',
-  },
-  {
-    id: 4,
-    title: 'VIORR(비오르)',
-    date: 10,
-    month: 12,
-    year: 2024,
-    category: '2순위',
-    isBookmarked: true,
-    address: '서울특별시 강남구 역삼동',
-    scale: '공급규모 4세대',
-    status: '접수 시작',
-  },
-];
 
 const InformationCalendar = () => {
   const [selectedTab, setSelectedTab] = useState(0);
   const [year, setYear] = useState(2024);
   const [month, setMonth] = useState(11);
-  const [events, setEvents] = useState<any[]>(dummyEvents);
+  const [events, setEvents] = useState<any[]>([]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [selectedDateEvents, setSelectedDateEvents] = useState<any[]>([]);
 
@@ -102,16 +53,146 @@ const InformationCalendar = () => {
   const bookmarkedEvents = events.filter((event) => event.isBookmarked);
 
   const handleSelectDate = (date: number) => {
-    const eventsForSelectedDate = events.filter(
+    const filteredData = selectedTab === 0 ? filteredEvents : bookmarkedEvents;
+    const eventsForSelectedDate = filteredData.filter(
       (event) =>
         event.date === date && event.month === month && event.year === year
     );
     setSelectedDateEvents(eventsForSelectedDate);
   };
+  
+
+  const getAnnouncementStatus = (announcement: any) => {
+    let startDate: string;
+    let endDate: string;
+  
+    if (announcement.house_secd === '01' || announcement.house_secd === '10') {
+      startDate = announcement.rcept_bgnde;
+      endDate = announcement.rcept_endde;
+    } else {
+      startDate = announcement.subscrpt_rcept_bgnde!;
+      endDate = announcement.subscrpt_rcept_endde!;
+    }
+  
+    const today = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+  
+    // 날짜 비교 로직
+    if (today >= start && today <= end) {
+      return "접수 시작";
+    } else if (today < start) {
+      return `접수 예정`;
+    } else {
+      return "접수 종료";
+    }
+  };
 
   useEffect(() => {
-    setEvents(dummyEvents);
-  }, []);
+    const loadData = async ()=>{
+      const response = await axios.get<{ data: any[] }>(
+        "http://localhost:8080/api/v1/housing/getMonthlyAnnouncement",
+        { params: { userId: 1,
+          month : month,
+          year : year
+        } }
+      );
+      const fetchedAnnouncements = response.data.data;
+      const eventList: SetStateAction<any[]> = [];
+      fetchedAnnouncements.forEach(data=>{
+        if(data.house_secd === "01" || data.house_secd === "10"){
+          if(data.gnrl_rnk1_crsparea_rcptde && data.gnrl_rnk1_crsparea_endde){
+            const start = new Date(data.gnrl_rnk1_crsparea_rcptde);
+            const end = new Date(data.gnrl_rnk1_crsparea_endde);
+            while(start <= end){
+              eventList.push({
+                title: data.house_nm,
+                date: start.getDate(),
+                month: start.getMonth()+1,
+                year: start.getFullYear(),
+                category: "1순위",
+                isBookmarked: data.isLiked,
+                address: data.hssply_adres,
+                scale: data.tot_suply_hshldco,
+                status: getAnnouncementStatus(data)
+              })
+              start.setDate(start.getDate() + 1); 
+            }
+          }
+          if(data.gnrl_rnk2_crsparea_rcptde && data.gnrl_rnk2_crsparea_endde){
+            const start = new Date(data.gnrl_rnk2_crsparea_rcptde);
+            const end = new Date(data.gnrl_rnk2_crsparea_endde);
+            while(start <= end){
+              eventList.push({
+                title: data.house_nm,
+                date: start.getDate(),
+                month: start.getMonth()+1,
+                year: start.getFullYear(),
+                category: "2순위",
+                isBookmarked: data.isLiked,
+                address: data.hssply_adres,
+                scale: data.tot_suply_hshldco,
+                status: getAnnouncementStatus(data)
+              })
+              start.setDate(start.getDate() + 1); 
+            }
+          }
+          if(data.spsply_rcept_bgnde && data.spsply_rcept_endde){
+            const start = new Date(data.spsply_rcept_bgnde);
+            const end = new Date(data.spsply_rcept_endde);
+            while(start <= end){
+              eventList.push({
+                title: data.house_nm,
+                date: start.getDate(),
+                month: start.getMonth()+1,
+                year: start.getFullYear(),
+                category: "특별공급",
+                isBookmarked: data.isLiked,
+                address: data.hssply_adres,
+                scale: data.tot_suply_hshldco,
+                status: getAnnouncementStatus(data)
+              })
+              start.setDate(start.getDate() + 1); 
+            }
+          }
+        }else{
+          let categoryType;
+          if(data.house_secd === '04'){
+            categoryType = "무순위"
+          }else if(data.house_secd === '06'){
+            categoryType = "취소후재공급"
+          }else if(data.house_secd === '11'){
+            categoryType = "임의공급"
+          }else{
+            categoryType = "임의공급"
+          }
+          if(data.subscrpt_rcept_bgnde && data.subscrpt_rcept_endde){
+            const start = new Date(data.subscrpt_rcept_bgnde);
+            const end = new Date(data.subscrpt_rcept_endde);
+            while(start <= end){
+              eventList.push({
+                title: data.house_nm,
+                date: start.getDate(),
+                month: start.getMonth()+1,
+                year: start.getFullYear(),
+                category: categoryType,
+                isBookmarked: data.isLiked,
+                address: data.hssply_adres,
+                scale: data.tot_suply_hshldco,
+                status: getAnnouncementStatus(data)
+              })
+              start.setDate(start.getDate() + 1); 
+            }
+          }
+
+        }
+        
+      })
+      setEvents(eventList);
+    }
+    loadData();
+    
+  }, [year, month]);
 
   return (
     <Container>
@@ -143,17 +224,17 @@ const InformationCalendar = () => {
               <Card
                 key={event.id}
                 status={event.status}
-                scale={event.scale}
+                scale={`공급규모 ${event.scale}세대`}
                 apartmentName={event.title}
                 address={event.address}
               />
             ))
           ) : (
-            <NoEventsText>
-              선택한 날짜에 해당하는 청약 정보가 없습니다.
-            </NoEventsText>
-          )}
-        </EventCardsWrapper>
+          <NoEventsText>
+          선택한 날짜에 해당하는 청약 정보가 없습니다.
+        </NoEventsText>
+  )}
+</EventCardsWrapper>
       </Content>
     </Container>
   );
