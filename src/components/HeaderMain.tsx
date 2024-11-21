@@ -1,8 +1,48 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import {
+  useNotifications,
+  NOTIFICATION_UPDATE_EVENT,
+  notificationEventEmitter,
+} from '@/hooks/useNotification';
+import { useEffect, useState } from 'react';
 
 const HeaderMain = ({ backgroundColor = 'var(--g60)' }) => {
   const navigate = useNavigate();
+  const { notifications, fetchNotifications } = useNotifications(); // 알림 목록 가져오기
+  const [hasUnread, setHasUnread] = useState(false); // 읽지 않은 알림 상태 추가
+
+  // 추가: 알림 상태 체크 함수
+  const checkUnreadStatus = () => {
+    const hasUnreadNotification = notifications.some(
+      (notification) => !notification.isRead
+    );
+    setHasUnread(hasUnreadNotification);
+  };
+
+  // notifications 변경 감지
+  useEffect(() => {
+    checkUnreadStatus();
+  }, [notifications]);
+
+  // 추가: 이벤트 리스너
+  useEffect(() => {
+    const handleNotificationUpdate = () => {
+      fetchNotifications();
+    };
+
+    notificationEventEmitter.addEventListener(
+      NOTIFICATION_UPDATE_EVENT,
+      handleNotificationUpdate
+    );
+
+    return () => {
+      notificationEventEmitter.removeEventListener(
+        NOTIFICATION_UPDATE_EVENT,
+        handleNotificationUpdate
+      );
+    };
+  }, [fetchNotifications]);
 
   return (
     <HeaderContainer backgroundColor={backgroundColor}>
@@ -16,7 +56,8 @@ const HeaderMain = ({ backgroundColor = 'var(--g60)' }) => {
       </LeftSection>
       <IconGroup>
         <Icon
-          src="/icons/bell.svg"
+          // 읽지 않은 알림이 있으면 bell-n.svg, 없으면 bell.svg 사용
+          src={hasUnread ? '/icons/bell-n.svg' : '/icons/bell.svg'}
           alt="Notifications"
           onClick={() => navigate('/notification')}
         />

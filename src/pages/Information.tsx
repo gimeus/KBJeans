@@ -1,41 +1,70 @@
 import { useState } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Tab1 from '@/components/Tab(1)';
 import Tab2 from '@/components/Tab(2)';
 import HeaderMain from '@/components/HeaderMain';
 import HeaderSub from '@/components/HeaderSub';
-import OfferBanner from '@/components/OfferBanner';
+import OfferBanner from '@/components/Offerbanner';
 import Card from '@/components/Card';
+import { useHousing } from '@/hooks/useHousing';
 
-const Component = () => {
+const Information = () => {
   const [selectedTab1, setSelectedTab1] = useState(0);
   const [selectedTab2, setSelectedTab2] = useState(0);
   const navigate = useNavigate();
+  const { housingResponse, loading, fetchHousings } = useHousing(selectedTab2);
 
   const tabs1 = ['청약 정보', '청약 일정', '청약 지도'];
   const tabs2 = ['전체 청약 정보', '찜한 청약 정보'];
 
-  const dummyCardData = [
-    {
-      status: '접수 종료',
-      scale: '공급규모 4세대',
-      apartmentName: '이문월드메르디앙 힐트리움 더테라스',
-      address: '서울특별시 동대문구 이문동 348-11, 348-12',
-    },
-    {
-      status: '접수 시작',
-      scale: '공급규모 10세대',
-      apartmentName: '강남 오피스텔',
-      address: '서울특별시 강남구 역삼동 123-45',
-    },
-    {
-      status: '접수 예정',
-      scale: '공급규모 20세대',
-      apartmentName: '부산 해운대 타워',
-      address: '부산광역시 해운대구 해운대동 567-89',
-    },
-  ];
+  // 청약 상태 계산
+  const getStatus = (
+    startDate: string | null,
+    endDate: string | null
+  ): string => {
+    if (!startDate || !endDate) return '접수 예정';
+
+    const now = new Date();
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (now < start) return '접수 예정';
+    if (now > end) return '접수 종료';
+    return '접수 시작';
+  };
+
+  // 상태에 따른 정렬 우선순위 부여
+  const getStatusPriority = (status: string): number => {
+    switch (status) {
+      case '접수 시작':
+        return 0;
+      case '접수 예정':
+        return 1;
+      case '접수 종료':
+        return 2;
+      default:
+        return 3;
+    }
+  };
+
+  // 정렬된 주택 데이터 얻기
+  const getSortedHousings = () => {
+    if (!housingResponse?.data) return [];
+
+    return [...housingResponse.data].sort((a, b) => {
+      const statusA = getStatus(
+        a.subscrpt_rcept_bgnde || a.rcept_bgnde,
+        a.subscrpt_rcept_endde || a.rcept_endde
+      );
+      const statusB = getStatus(
+        b.subscrpt_rcept_bgnde || b.rcept_bgnde,
+        b.subscrpt_rcept_endde || b.rcept_endde
+      );
+
+      return getStatusPriority(statusA) - getStatusPriority(statusB);
+    });
+  };
 
   const handleTab1Change = (index: number) => {
     setSelectedTab1(index);
@@ -67,27 +96,39 @@ const Component = () => {
       </GroupWrapper>
       {selectedTab1 === 0 && (
         <Content>
-          {selectedTab2 === 0 && (
+          {loading ? (
+            <SpinnerWrapper>
+              <Spinner />
+            </SpinnerWrapper>
+          ) : (
             <div>
-              {dummyCardData.map((card, index) => (
+              {getSortedHousings().map((housing) => (
                 <Card
-                  key={index}
-                  status={card.status}
-                  scale={card.scale}
-                  apartmentName={card.apartmentName}
-                  address={card.address}
+                  key={housing.house_manage_no}
+                  status={getStatus(
+                    housing.subscrpt_rcept_bgnde || housing.rcept_bgnde,
+                    housing.subscrpt_rcept_endde || housing.rcept_endde
+                  )}
+                  scale={`공급규모 ${housing.tot_suply_hshldco}세대`}
+                  apartmentName={housing.house_nm}
+                  address={housing.hssply_adres}
+                  pblanc_no={housing.pblanc_no}
+                  house_manage_no={housing.house_manage_no}
+                  house_secd={housing.house_secd} // 주택구분코드 전달
+                  liked={housing.isLiked}
+                  userId={1} // 사용자 ID 전달
+                  fetchHousings={fetchHousings} // fetchHousings 전달
                 />
               ))}
             </div>
           )}
-          {selectedTab2 === 1 && <div>찜한 청약 정보 내용</div>}
         </Content>
       )}
     </PageWrapper>
   );
 };
 
-export default Component;
+export default Information;
 
 const PageWrapper = styled.div`
   display: flex;
@@ -115,4 +156,29 @@ const Content = styled.div`
   flex-direction: column;
   width: 100%;
   box-sizing: border-box;
+`;
+
+const SpinnerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* 로딩 스피너의 영역 높이 */
+`;
+
+const spin = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`;
+
+const Spinner = styled.div`
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--n20);
+  border-top: 4px solid var(--g60);
+  border-radius: 50%;
+  animation: ${spin} 1s linear infinite; /* 회전 애니메이션 */
 `;

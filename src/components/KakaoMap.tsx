@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import Card from '@/components/Card';
@@ -102,14 +103,15 @@ const KakaoMap: React.FC = () => {
         return "접수 완료";
       }
     };
+    const navigate = useNavigate();
+
+    const handleBackClick = () => {
+      navigate(-1);
+    };
     const handleLocationClick = (location : Location)=>{
         setSearchTerm("");
         setSelectedLocation(location);
       }
-
-    const handleMarkerClick = (announcement:HousingAnnouncement) =>{
-      setSelectedMarker(announcement);
-    }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const input = e.target.value;
@@ -181,11 +183,21 @@ const KakaoMap: React.FC = () => {
   return (
     <div>
     <Container>
-      <BackIcon src={backIcon} />
+      <BackIcon src={backIcon} onClick={handleBackClick}/>
       <SearchBox>
         <SearchIcon src={searchIcon} />
         <PlaceholderText>
-          <input type = "text" placeholder='지역 검색' value={searchTerm} onChange={handleInputChange}></input>
+          <input type = "text" placeholder='지역 검색' value={searchTerm} onChange={handleInputChange} style={{
+      width: "100%",
+      height: "100%",
+      border: "none",
+      background: "transparent",
+      outline: "none",
+      color: "var(--n100)", // 텍스트 색상
+      fontSize: "16px",
+      fontWeight: "500",
+      lineHeight: "100%",
+    }}></input>
           {searchTerm.trim() && filteredLocations.length > 0 && (
         <div
           style={{
@@ -225,7 +237,7 @@ const KakaoMap: React.FC = () => {
       ></div>
       {selectedMarker &&(
           <CardContainer>
-            <Card status={getAnnouncementStatus(selectedMarker)} scale={selectedMarker.tot_suply_hshldco.toString()} apartmentName={selectedMarker.house_nm} address={selectedMarker.hssply_adres} pblanc_no={selectedMarker.pblanc_no} house_manage_no={selectedMarker.house_manage_no} liked={selectedMarker.isLiked} ></Card>
+            <Card status={getAnnouncementStatus(selectedMarker)} scale={selectedMarker.tot_suply_hshldco.toString()} apartmentName={selectedMarker.house_nm} address={selectedMarker.hssply_adres} pblanc_no={selectedMarker.pblanc_no} house_manage_no={selectedMarker.house_manage_no} liked={selectedMarker.isLiked} userId={1} house_secd={selectedMarker.house_secd}></Card>
           </CardContainer>
       )}
     </MapContainer>  
@@ -284,11 +296,9 @@ const PlaceholderText = styled.span`
 const CardContainer = styled.div`
   position: absolute;
   bottom: 10px;  /* Adjust this to set the distance from the bottom of the map */
-  left: 10px;
   width: 100%;
-  padding: 10px;
   z-index: 10;  /* Ensure the card appears above the map */
-  background-color: white;  /* You can style the card's background as needed */
+  background-color: rgba(255, 255, 255, 0.5);
 `;
 
 const MapContainer = styled.div`

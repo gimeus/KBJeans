@@ -1,7 +1,11 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
-const HeaderSub = ({ title }) => {
+interface HeaderSubProps {
+  title: string;
+}
+
+const HeaderSub = ({ title }: HeaderSubProps) => {
   const navigate = useNavigate();
 
   return (

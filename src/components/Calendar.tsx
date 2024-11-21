@@ -49,13 +49,14 @@ const Calendar = ({ year, month, events, onSelectDate }: any) => {
               (event: any) =>
                 event.date === i && event.year === year && event.month === month
             )
+            .slice(0, 4) // 최대 4개의 이벤트만 가져오기
             .map((e: any, idx: number) => (
               <EventBox key={`event-${e.id}-${idx}`} category={e.category}>
                 {e.title}
               </EventBox>
             ))}
         </CalendarDay>
-      );
+      ); 
     }
 
     const remainingDays = (7 - (days.length % 7)) % 7;

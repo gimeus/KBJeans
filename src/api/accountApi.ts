@@ -33,4 +33,4 @@ export const fetchDepositsByAccountId = async (accountId: number) => {
     params: { accountId },
   });
   return response.data;
-};
+};  
