@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface HeaderSubProps {
   title: string;
@@ -7,10 +7,22 @@ interface HeaderSubProps {
 
 const HeaderSub = ({ title }: HeaderSubProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleBackClick = () => {
+    if (
+      location.pathname === '/notification' ||
+      location.pathname === '/information'
+    ) {
+      navigate('/');
+    } else {
+      navigate(-1);
+    }
+  };
 
   return (
     <HeaderContainer>
-      <BackIcon src="/icons/back.svg" alt="Back" onClick={() => navigate(-1)} />
+      <BackIcon src="/icons/back.svg" alt="Back" onClick={handleBackClick} />
       <Title>{title}</Title>
     </HeaderContainer>
   );
