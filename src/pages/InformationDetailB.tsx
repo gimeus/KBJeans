@@ -148,8 +148,8 @@ const InformationDetailB = () => {
 
             <Content>
                 <InfoSection
-                    title="이문월드메르디앙 힐트리움 더테라스"
-                    address="서울특별시 동대문구 이문동 348-11, 348-12"
+                    title={announcement?.house_nm}
+                    address={announcement?.hssply_adres}
                     details={[
                         { label: "공급규모", value: `${announcement?.tot_suply_hshldco}세대` },
                         { label: "문의처", value: `${announcement?.mdhs_telno}` },
