@@ -46,7 +46,7 @@ const OfferBannerContainer = () => {
 
         // 최근 2일 이내의 공고만 필터링
         const twoDaysAgo = new Date();
-        twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+        twoDaysAgo.setDate(twoDaysAgo.getDate() - 30);
 
         const recentAnnouncements = response.data.data
           .filter((housing) => {

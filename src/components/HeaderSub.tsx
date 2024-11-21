@@ -42,7 +42,7 @@ const Title = styled.h1`
   left: 50%;
   transform: translateX(-50%);
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--g10);
   line-height: 100%;
   margin: 0;

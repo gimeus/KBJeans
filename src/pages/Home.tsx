@@ -12,7 +12,7 @@ import {
   fetchDesiredArea,
   fetchBadgeCount,
   updateDesiredArea,
-  incrementPageVisit
+  incrementPageVisit,
 } from '@/api/userApi';
 import { fetchTotalBalance } from '@/api/accountApi';
 
@@ -286,7 +286,7 @@ const AlignCenter = styled.div`
 const Group = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   padding: 0 18px;
 `;
 
@@ -299,5 +299,7 @@ const Section = styled.div`
 const SectionTitle = styled.h2`
   color: var(--g20);
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
+  line-height: 100%;
+  margin-left: 2px;
 `;
