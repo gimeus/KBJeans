@@ -12,7 +12,8 @@ const HeaderSub = ({ title }: HeaderSubProps) => {
   const handleBackClick = () => {
     if (
       location.pathname === '/notification' ||
-      location.pathname === '/information'
+      location.pathname === '/information' ||
+      location.pathname === '/score'
     ) {
       navigate('/');
     } else {

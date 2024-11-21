@@ -272,7 +272,7 @@ const Container = styled.div`
 `;
 
 const Content = styled.div`
-  margin-top: 20px;
+  // margin-top: 20px;
 `;
 
 const CalendarSection = styled.div`
@@ -280,9 +280,11 @@ const CalendarSection = styled.div`
 `;
 
 const EventCardsWrapper = styled.div`
-  display: flex;
+  // display: flex;
   flex-direction: column;
   background-color: var(--n30);
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 const NoEventsText = styled.p`
