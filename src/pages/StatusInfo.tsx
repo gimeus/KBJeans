@@ -47,10 +47,19 @@ const StatusInfoPage = () => {
       // 카테고리 매핑
       const categories = ['access', 'savings', 'bookmark'];
     
+      if(badgeNumber===13){
+        return `bell-badge.svg`;
+      }
+
+      if(badgeNumber===14){
+        return `calendar-badge.svg`;
+      }
       // 배지 번호를 기준으로 카테고리와 숫자 결정
       const categoryIndex = Math.floor((badgeNumber - 1) / 4); // 카테고리 결정 (0: access, 1: savings, 2: bookmark)
       const iconNumber = [1, 10, 50, 100][(badgeNumber - 1) % 4]; // 배지 번호에 따라 숫자 결정
     
+
+
       // 파일 이름 생성
       return `${categories[categoryIndex]}-${iconNumber}.svg`;
     };
