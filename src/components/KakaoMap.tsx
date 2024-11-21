@@ -227,7 +227,7 @@ const KakaoMap: React.FC = () => {
       ></div>
       {selectedMarker &&(
           <CardContainer>
-            <Card status={getAnnouncementStatus(selectedMarker)} scale={selectedMarker.tot_suply_hshldco.toString()} apartmentName={selectedMarker.house_nm} address={selectedMarker.hssply_adres} pblanc_no={selectedMarker.pblanc_no} house_manage_no={selectedMarker.house_manage_no} liked={selectedMarker.isLiked} userId={1}></Card>
+            <Card status={getAnnouncementStatus(selectedMarker)} scale={selectedMarker.tot_suply_hshldco.toString()} apartmentName={selectedMarker.house_nm} address={selectedMarker.hssply_adres} pblanc_no={selectedMarker.pblanc_no} house_manage_no={selectedMarker.house_manage_no} liked={selectedMarker.isLiked} userId={1} house_secd={selectedMarker.house_secd}></Card>
           </CardContainer>
       )}
     </MapContainer>  
