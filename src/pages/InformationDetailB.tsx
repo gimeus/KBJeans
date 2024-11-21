@@ -83,6 +83,15 @@ interface HousingAnnouncement {
   house_models: HouseModel[];
   isLiked: boolean; // 추가
 }
+
+function formatNumberWithCommas(number: number) {
+  if (number === null || number === undefined) {
+    return null;
+  }
+  // Convert number to string and add commas
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
 function formatDateString(dateString: String | null | undefined): string {
   if (!dateString) {
     return ''; // 입력 값이 null, undefined 또는 빈 문자열인 경우 null 반환
@@ -132,7 +141,7 @@ const InformationDetailB = () => {
         타입: m.house_ty,
         전용면적: m.suply_ar || '',
         공급규모: m.suply_hshldco,
-        공급금액: m.lttot_top_amount,
+        공급금액: `${formatNumberWithCommas(m.lttot_top_amount)}`,
       });
     });
     setTableRows(tableRowList);

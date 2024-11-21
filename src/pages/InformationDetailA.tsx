@@ -83,6 +83,13 @@ interface HousingAnnouncement {
   house_models: HouseModel[];
   isLiked: boolean; // 추가
 }
+function formatNumberWithCommas(number: number) {
+  if (number === null || number === undefined) {
+    return null;
+  }
+  // Convert number to string and add commas
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
 
 function formatDateString(dateString: String | null | undefined): string {
   if (!dateString) {
@@ -192,7 +199,10 @@ const InformationDetailA = () => {
         '공급규모 일반': m.suply_hshldco,
         '공급규모 특별': m.spsply_hshldco,
       });
-      table2RowsList.push({ 타입: m.house_ty, 공급금액: m.lttot_top_amount });
+      table2RowsList.push({
+        타입: m.house_ty,
+        공급금액: `${formatNumberWithCommas(m.lttot_top_amount)}`,
+      });
     });
     setTable1Rows(table1RowsList);
     setTable2Rows(table2RowsList);
