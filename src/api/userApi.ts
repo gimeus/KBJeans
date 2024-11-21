@@ -29,5 +29,8 @@ export const fetchBadges = async (userId: number) => {
 // API 호출: 캘린더 기능 사용 횟수 증가
 export const incrementCalendarUsage = async (userId: number) => {
   const response = await axios.post(`${BASE_URL}/calendar-usage`, null, { params: { userId } });
+// API 호출: 페이지 방문 수 증가
+export const incrementPageVisit = async (userId: number) => {
+  const response = await axios.post(`${BASE_URL}/visit`, null, { params: { userId } });
   return response.data;
 };
