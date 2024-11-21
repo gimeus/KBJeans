@@ -187,7 +187,17 @@ const KakaoMap: React.FC = () => {
       <SearchBox>
         <SearchIcon src={searchIcon} />
         <PlaceholderText>
-          <input type = "text" placeholder='지역 검색' value={searchTerm} onChange={handleInputChange}></input>
+          <input type = "text" placeholder='지역 검색' value={searchTerm} onChange={handleInputChange} style={{
+      width: "100%",
+      height: "100%",
+      border: "none",
+      background: "transparent",
+      outline: "none",
+      color: "var(--n100)", // 텍스트 색상
+      fontSize: "16px",
+      fontWeight: "500",
+      lineHeight: "100%",
+    }}></input>
           {searchTerm.trim() && filteredLocations.length > 0 && (
         <div
           style={{
