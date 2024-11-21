@@ -1,23 +1,67 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
+
+const heartIcon = '/icons/heart.svg';
+const heartFillIcon = '/icons/heart-fill.svg';
 
 interface ApplyButtonProps {
   onClick: () => void;
+  initialLiked: boolean; // 초기 찜 상태
+  pblancNo: string; // 공고번호
+  houseManageNo: string; // 주택관리번호
+  userId: number; // 사용자 ID
 }
 
-const ApplyButton: React.FC<ApplyButtonProps> = ({ onClick }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
+const ApplyButton: React.FC<ApplyButtonProps> = ({
+  onClick,
+  initialLiked,
+  pblancNo,
+  houseManageNo,
+  userId,
+}) => {
+  // 초기값을 props에서 받아옴
+  const [isLiked, setIsLiked] = useState(initialLiked);
 
-  const handleFavoriteToggle = () => {
-    setIsFavorite((prev) => !prev);
+  useEffect(() => {
+    setIsLiked(initialLiked);
+  }, [initialLiked]);
+
+  // 찜하기/취소 핸들러 추가
+  const handleHeartClick = async (e: React.MouseEvent<HTMLImageElement>) => {
+    e.stopPropagation();
+    try {
+      if (!isLiked) {
+        // 찜 추가
+        await axios.post('http://localhost:8080/api/v1/likes', null, {
+          params: {
+            userId,
+            pblancNo,
+            houseManageNo,
+          },
+        });
+      } else {
+        // 찜 삭제
+        await axios.delete('http://localhost:8080/api/v1/likes', {
+          params: {
+            userId,
+            pblancNo,
+            houseManageNo,
+          },
+        });
+      }
+      setIsLiked(!isLiked);
+    } catch (error) {
+      console.error('찜하기 처리 실패:', error);
+    }
   };
 
   return (
     <Wrapper>
       <HeartIcon
-        src={isFavorite ? '/icons/heart-fill.svg' : '/icons/heart.svg'}
+        src={isLiked ? heartFillIcon : heartIcon}
         alt="Favorite Icon"
-        onClick={handleFavoriteToggle}
+        onClick={handleHeartClick} // 이벤트 핸들러 직접 전달
       />
       <Button onClick={onClick}>신청하기</Button>
     </Wrapper>
