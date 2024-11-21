@@ -16,7 +16,11 @@ interface GoalSelectionProps {
 
 const regions = [
   { label: '그 외 지역', activeImage: countryC, inactiveImage: country },
-  { label: '기타 광역시', activeImage: metropolitanC, inactiveImage: metropolitan },
+  {
+    label: '기타 광역시',
+    activeImage: metropolitanC,
+    inactiveImage: metropolitan,
+  },
   { label: '서울/부산', activeImage: cityC, inactiveImage: city },
 ];
 
@@ -81,3 +85,4 @@ const CardGroup = styled.div`
   display: flex;
   gap: 8px;
 `;
+
