@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Tab1 from '@/components/Tab(1)';
 import Tab2 from '@/components/Tab(2)';
 import HeaderMain from '@/components/HeaderMain';
@@ -35,6 +34,38 @@ const Information = () => {
     return '접수 시작';
   };
 
+  // 상태에 따른 정렬 우선순위 부여
+  const getStatusPriority = (status: string): number => {
+    switch (status) {
+      case '접수 시작':
+        return 0;
+      case '접수 예정':
+        return 1;
+      case '접수 종료':
+        return 2;
+      default:
+        return 3;
+    }
+  };
+
+  // 정렬된 주택 데이터 얻기
+  const getSortedHousings = () => {
+    if (!housingResponse?.data) return [];
+
+    return [...housingResponse.data].sort((a, b) => {
+      const statusA = getStatus(
+        a.subscrpt_rcept_bgnde || a.rcept_bgnde,
+        a.subscrpt_rcept_endde || a.rcept_endde
+      );
+      const statusB = getStatus(
+        b.subscrpt_rcept_bgnde || b.rcept_bgnde,
+        b.subscrpt_rcept_endde || b.rcept_endde
+      );
+
+      return getStatusPriority(statusA) - getStatusPriority(statusB);
+    });
+  };
+
   const handleTab1Change = (index: number) => {
     setSelectedTab1(index);
     if (index === 1) {
@@ -46,41 +77,6 @@ const Information = () => {
 
   const handleTab2Change = (index: number) => {
     setSelectedTab2(index);
-  };
-
-  // 찜하기/해제 처리 함수
-  const handleLike = async (
-    pblancNo: string,
-    houseManageNo: string,
-    isLiked: boolean
-  ) => {
-    try {
-      const userId = 1;
-
-      if (!isLiked) {
-        // isLiked가 false일 때 찜 추가
-        await axios.post('http://localhost:8080/api/v1/likes', null, {
-          params: {
-            userId,
-            pblancNo,
-            houseManageNo,
-          },
-        });
-      } else {
-        // isLiked가 true일 때 찜 삭제
-        await axios.delete('http://localhost:8080/api/v1/likes', {
-          params: {
-            userId,
-            pblancNo,
-            houseManageNo,
-          },
-        });
-      }
-      // 목록 새로고침
-      await fetchHousings();
-    } catch (error) {
-      console.error('찜하기 처리 실패:', error);
-    }
   };
 
   return (
@@ -106,7 +102,7 @@ const Information = () => {
             </SpinnerWrapper>
           ) : (
             <div>
-              {housingResponse?.data.map((housing) => (
+              {getSortedHousings().map((housing) => (
                 <Card
                   key={housing.house_manage_no}
                   status={getStatus(
