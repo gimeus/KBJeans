@@ -5,17 +5,17 @@ import Button from '@/components/Button';
 import Select from '@/components/Select';
 import { useNavigate } from 'react-router-dom';
 import { useArea } from '@/context/AreaContext';
+import { updateDesiredArea } from '@/api/userApi'; 
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const { selectedArea, setSelectedArea, depositAmount } = useArea();
 
   const areaOptions = [
-    { label: '면적 선택', amount: '면적 선택 시 예상 예치금 안내' },
-    { label: '85㎡ 이하 (32평)', amount: '200-300만원 이상 예치' },
-    { label: '102㎡ 이하 (39평)', amount: '300-600만원 이상 예치' },
-    { label: '135㎡ 이하 (51평)', amount: '400-1000만원 이상 예치' },
-    { label: '모든 면적', amount: '500-1500만원 이상 예치' },
+    { label: '모든 면적', amount: '500-1500만원 이상 예치', value: 0 },
+    { label: '85㎡ 이하 (32평)', amount: '200-300만원 이상 예치', value: 1 },
+    { label: '102㎡ 이하 (39평)', amount: '300-600만원 이상 예치', value: 2 },
+    { label: '135㎡ 이하 (51평)', amount: '400-1000만원 이상 예치', value: 3 },
   ];
 
   const handleSelectChange = (selectedLabel: string) => {
@@ -27,8 +27,24 @@ const Onboarding = () => {
     }
   };
 
-  const handleButtonClick = () => {
-    navigate('/');
+  const handleButtonClick = async () => {
+    const selectedOption = areaOptions.find(
+      (option) => option.label === selectedArea
+    );
+
+    if (selectedOption) {
+      try {
+        const userId = 1; // 사용자 ID (실제 사용자 ID로 변경)
+        await updateDesiredArea(userId, selectedOption.value);
+        console.log('API 요청 성공:', selectedOption.value);
+        navigate('/'); // 메인 페이지로 이동
+      } catch (error) {
+        console.error('API 요청 실패:', error);
+        // 필요 시 에러 메시지 표시
+      }
+    } else {
+      console.warn('유효하지 않은 면적 선택');
+    }
   };
 
   return (
