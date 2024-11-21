@@ -15,7 +15,7 @@ export const useHousing = (selectedTab2: number) => {
         {
           params: {
             page: 1,
-            pageSize: 20,
+            pageSize: 30,
             userId,
           },
         }
