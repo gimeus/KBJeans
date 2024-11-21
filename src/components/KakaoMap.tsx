@@ -7,6 +7,7 @@ import Card from "@/components/Card";
 const backIcon = "/icons/back.svg";
 const searchIcon = "/icons/search.svg";
 const categoryIcon = "/icons/multimedia.svg";
+const pinIcon = "/icons/pin/svg";
 
 type Location = {
     city: string;
@@ -159,9 +160,13 @@ const KakaoMap: React.FC = () => {
                     geocoder.addressSearch(address, function (result: any, status: any) {
                         if (status === kakao.maps.services.Status.OK) {
                             const coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                            const imageSize = new kakao.maps.Size(32, 35);
+                            const markerImage = new kakao.maps.MarkerImage("../icons/pin.svg", imageSize);
+
                             const marker = new kakao.maps.Marker({
                                 position: coords,
                                 title: announcement.house_nm,
+                                image: markerImage,
                             });
                             marker.setClickable(true);
                             kakao.maps.event.addListener(marker, "click", function () {
@@ -311,7 +316,7 @@ const CardContainer = styled.div`
     bottom: 10px; /* Adjust this to set the distance from the bottom of the map */
     width: 100%;
     z-index: 10; /* Ensure the card appears above the map */
-    background-color: rgba(255, 255, 255, 0.5);
+    background: none;
 `;
 
 const MapContainer = styled.div`
