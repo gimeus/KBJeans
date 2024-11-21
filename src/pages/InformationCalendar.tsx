@@ -7,7 +7,7 @@ import Calendar from '@/components/Calendar';
 import HeaderCalendar from '@/components/HeaderCalendar';
 import Card from '@/components/Card';
 import axios from 'axios';
-
+import { incrementCalendarUsage } from '@/api/userApi'; // API 호출 함수 추가
 
 const InformationCalendar = () => {
   const [selectedTab, setSelectedTab] = useState(0);
@@ -90,6 +90,14 @@ const InformationCalendar = () => {
 
   useEffect(() => {
     const loadData = async ()=>{
+      // 캘린더 사용 횟수 증가 호출
+      try {
+        await incrementCalendarUsage(1); // 사용자 ID 1 예제
+        console.log('캘린더 사용 횟수 증가 완료');
+      } catch (error) {
+        console.error('캘린더 사용 횟수 증가 실패:', error);
+      }
+
       const response = await axios.get<{ data: any[] }>(
         "http://localhost:8080/api/v1/housing/getMonthlyAnnouncement",
         { params: { userId: 1,

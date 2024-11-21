@@ -25,3 +25,9 @@ export const fetchBadges = async (userId: number) => {
   const response = await axios.get(`${BASE_URL}/badges`, { params: { userId } });
   return response.data;
 };
+
+// API 호출: 캘린더 기능 사용 횟수 증가
+export const incrementCalendarUsage = async (userId: number) => {
+  const response = await axios.post(`${BASE_URL}/calendar-usage`, null, { params: { userId } });
+  return response.data;
+};
