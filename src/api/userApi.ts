@@ -25,3 +25,9 @@ export const fetchBadges = async (userId: number) => {
   const response = await axios.get(`${BASE_URL}/badges`, { params: { userId } });
   return response.data;
 };
+
+// API 호출: 페이지 방문 수 증가
+export const incrementPageVisit = async (userId: number) => {
+  const response = await axios.post(`${BASE_URL}/visit`, null, { params: { userId } });
+  return response.data;
+};

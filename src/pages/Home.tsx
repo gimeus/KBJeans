@@ -12,6 +12,7 @@ import {
   fetchDesiredArea,
   fetchBadgeCount,
   updateDesiredArea,
+  incrementPageVisit
 } from '@/api/userApi';
 import {
   fetchTotalBalance
@@ -55,6 +56,10 @@ const Home = () => {
     const loadData = async () => {
       const userId = 1; // 예시 사용자 ID
       try {
+        // 방문 횟수 증가 API 호출
+        await incrementPageVisit(userId);
+        console.log('페이지 방문 횟수 증가 완료');
+
         const badges = await fetchBadgeCount(userId);
         setBadgeCount(badges);
 
