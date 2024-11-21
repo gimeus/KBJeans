@@ -154,8 +154,8 @@ const InputContainer = styled.div`
 const InputLabel = styled.label`
   color: var(--g10);
   font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
   line-height: 100%;
   margin-left: 2px;
 `;
@@ -184,14 +184,14 @@ const SelectLabelWithScore = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   margin-left: 2px;
 `;
 
 const SelectLabel = styled.span`
   color: var(--g10);
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 100%;
 `;
 
