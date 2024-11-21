@@ -13,47 +13,62 @@ import {
   fetchBadgeCount,
   updateDesiredArea,
 } from '@/api/userApi';
-import {
-  fetchTotalBalance
-} from '@/api/accountApi';
+import { fetchTotalBalance } from '@/api/accountApi';
 
 const Home = () => {
-  const { selectedArea, depositAmount, setSelectedArea } = useArea();
+  const { selectedArea, setSelectedArea } = useArea();
   const [subscriptionAmount, setSubscriptionAmount] = useState<number>(0);
   const [badgeCount, setBadgeCount] = useState<number>(0);
   const [deficit, setDeficit] = useState<number>(0);
+  const [backgroundImage, setBackgroundImage] = useState<string>('');
+  const [rectangleText, setRectangleText] = useState<string>('');
+  const [characterImage, setCharacterImage] = useState<string>(
+    '/icons/character.svg'
+  );
+  const [isGoalAchieved, setIsGoalAchieved] = useState<boolean>(false); // 목표 달성 여부 상태 추가
 
-  const areaOptions = [
-    { label: '모든 면적', amount: '500-1500만원 이상 예치' },
-    { label: '85㎡ 이하 (32평)', amount: '200-300만원 이상 예치' },
-    { label: '102㎡ 이하 (39평)', amount: '300-600만원 이상 예치' },
-    { label: '135㎡ 이하 (51평)', amount: '400-1000만원 이상 예치' },
-  ];
+  const backgrounds = {
+    '그 외 지역': '/img/background-country.png',
+    '기타 광역시': '/img/background-metropolitan.png',
+    '서울/부산': '/img/background-city.png',
+    '모든 청약 지역 달성': '/img/background.png',
+  };
 
-  // 희망 면적 선택 변경 핸들러
-  const handleSelectChange = async (selectedLabel: string) => {
-    const selectedOption = areaOptions.find(
-      (option) => option.label === selectedLabel
-    );
-    if (selectedOption) {
-      setSelectedArea(selectedLabel, selectedOption.amount);
+  const areaDepositLimits = {
+    '85㎡ 이하 (32평)': [2000000, 2500000, 3000000],
+    '102㎡ 이하 (39평)': [3000000, 4000000, 6000000],
+    '135㎡ 이하 (51평)': [4000000, 7000000, 10000000],
+    '모든 면적': [5000000, 10000000, 15000000],
+  };
 
-      try {
-        const userId = 1; // 예제 사용자 ID
-        const desiredAreaIndex = areaOptions.indexOf(selectedOption);
-
-        // 서버에 업데이트 요청
-        await updateDesiredArea(userId, desiredAreaIndex);
-        console.log('희망 면적 업데이트 완료');
-      } catch (error) {
-        console.error('희망 면적 업데이트 실패:', error);
-      }
+  const updateBackgroundAndText = () => {
+    const thresholds = areaDepositLimits[selectedArea] || [];
+    if (subscriptionAmount >= thresholds[2]) {
+      setBackgroundImage(backgrounds['모든 청약 지역 달성']);
+      setRectangleText('');
+      setCharacterImage('/icons/character-f.svg');
+      setIsGoalAchieved(true);
+    } else if (subscriptionAmount >= thresholds[1]) {
+      setBackgroundImage(backgrounds['서울/부산']);
+      setRectangleText('서울/부산');
+      setCharacterImage('/icons/character.svg');
+      setIsGoalAchieved(false);
+    } else if (subscriptionAmount >= thresholds[0]) {
+      setBackgroundImage(backgrounds['기타 광역시']);
+      setRectangleText('기타 광역시');
+      setCharacterImage('/icons/character.svg');
+      setIsGoalAchieved(false);
+    } else {
+      setBackgroundImage(backgrounds['그 외 지역']);
+      setRectangleText('그 외 지역');
+      setCharacterImage('/icons/character.svg');
+      setIsGoalAchieved(false);
     }
   };
 
   useEffect(() => {
     const loadData = async () => {
-      const userId = 1; // 예시 사용자 ID
+      const userId = 1;
       try {
         const badges = await fetchBadgeCount(userId);
         setBadgeCount(badges);
@@ -61,35 +76,70 @@ const Home = () => {
         const depositAmount = await fetchTotalBalance(userId);
         setSubscriptionAmount(depositAmount);
 
-        // 희망 면적 데이터 가져오기
         const desiredAreaResponse = await fetchDesiredArea(userId);
-        const { desiredArea } = desiredAreaResponse; // API의 desiredArea 필드
-        if (desiredArea >= 0 && desiredArea < areaOptions.length) {
-          const selectedOption = areaOptions[desiredArea];
-          setSelectedArea(selectedOption.label, selectedOption.amount);
+        const { desiredArea } = desiredAreaResponse;
+
+        if (
+          desiredArea >= 0 &&
+          desiredArea < Object.keys(areaDepositLimits).length
+        ) {
+          const selectedOption = Object.keys(areaDepositLimits)[desiredArea];
+          setSelectedArea(selectedOption);
         }
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('데이터 로드 실패:', error);
       }
     };
 
     loadData();
   }, []);
 
-  const message = deficit > 0 
-  ? `다음 건물까지 ${deficit.toLocaleString()}원 예치`
-  : '모든 목표를 달성했습니다!';
+  useEffect(() => {
+    updateBackgroundAndText();
+  }, [subscriptionAmount, selectedArea]);
+
+  const handleSelectChange = async (selectedLabel: string) => {
+    setSelectedArea(selectedLabel);
+    try {
+      const userId = 1;
+      const desiredAreaIndex =
+        Object.keys(areaDepositLimits).indexOf(selectedLabel);
+      await updateDesiredArea(userId, desiredAreaIndex);
+      console.log('희망 면적 업데이트 완료');
+    } catch (error) {
+      console.error('희망 면적 업데이트 실패:', error);
+    }
+  };
+
+  const message =
+    deficit > 0
+      ? `다음 건물까지\n${deficit.toLocaleString()}원 예치`
+      : '모든 목표를 달성했습니다!';
 
   return (
     <Wrapper>
       <HeaderMain backgroundColor="#D0F0FE" />
-      <BackgroundSection>
+      <StatusInfoWrapper>
         <StatusInfo
           badgeCount={badgeCount}
           subscriptionAmount={subscriptionAmount}
         />
-        <Message message={message} />
+      </StatusInfoWrapper>
+      <BackgroundSection style={{ backgroundImage: `url(${backgroundImage})` }}>
+        <MessageContainer>
+          <Message message={message} isGoalAchieved={isGoalAchieved} />
+        </MessageContainer>
+        <CharacterWrapper isGoalAchieved={isGoalAchieved}>
+          <CharacterImage src={characterImage} alt="Character" />
+        </CharacterWrapper>
       </BackgroundSection>
+      <Rectangle>
+        <LeftRectangle isGoalAchieved={isGoalAchieved} />
+        <CenterRectangle isGoalAchieved={isGoalAchieved} />
+        <RightRectangle isGoalAchieved={isGoalAchieved}>
+          <CenterText>{rectangleText}</CenterText>
+        </RightRectangle>
+      </Rectangle>
       <ContentGroup>
         <BannerGroup>
           <OfferBanner />
@@ -101,11 +151,10 @@ const Home = () => {
           <Group>
             <Section>
               <SectionTitle>청약 희망 면적</SectionTitle>
-              <DepositInfo>{depositAmount}</DepositInfo>
             </Section>
             <Select
               label={selectedArea}
-              options={areaOptions.map((option) => option.label)}
+              options={Object.keys(areaDepositLimits)}
               onSelect={handleSelectChange}
             />
           </Group>
@@ -132,16 +181,75 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
+const StatusInfoWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background: #d0f0fe;
+  z-index: 1;
+`;
+
 const BackgroundSection = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: center;
   width: 100%;
-  height: 300px;
-  background: linear-gradient(180deg, #d0f0fe 4.68%, #e5f6fe 40.64%);
+  height: 235px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  overflow: hidden;
+`;
+
+const CharacterWrapper = styled.div<{ isGoalAchieved: boolean }>`
+  margin-top: ${(props) => (props.isGoalAchieved ? '18px' : '16px')};
+  align-self: ${(props) => (props.isGoalAchieved ? 'center' : 'flex-start')};
+  margin-left: ${(props) => (props.isGoalAchieved ? '0' : '18%')};
   position: relative;
-  padding: 20px;
+  height: ${(props) => (props.isGoalAchieved ? '142px' : '110px')};
+`;
+
+const MessageContainer = styled.div<{ isGoalAchieved: boolean }>`
+  margin-top: ${(props) => (props.isGoalAchieved ? '24px' : '16px')};
+`;
+
+const CharacterImage = styled.img`
+  height: 100%;
+`;
+
+const Rectangle = styled.div<{ isGoalAchieved: boolean }>`
+  display: flex;
+  width: 100%;
+  height: 25px;
+`;
+
+const LeftRectangle = styled.div<{ isGoalAchieved: boolean }>`
+  flex: 1.2;
+  background-color: ${(props) =>
+    props.isGoalAchieved ? 'var(--p10)' : 'var(--p10)'};
+`;
+
+const CenterRectangle = styled.div<{ isGoalAchieved: boolean }>`
+  flex: 1;
+  background-color: ${(props) =>
+    props.isGoalAchieved ? 'var(--p10)' : 'var(--n30)'};
+`;
+
+const RightRectangle = styled.div<{ isGoalAchieved: boolean }>`
+  flex: 2;
+  background-color: ${(props) =>
+    props.isGoalAchieved ? 'var(--p10)' : 'var(--n30)'};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const CenterText = styled.div`
+  color: var(--n20);
+  font-size: 14px;
+  line-height: 25px;
 `;
 
 const ContentGroup = styled.div`
@@ -154,7 +262,7 @@ const ContentGroup = styled.div`
 
 const BannerGroup = styled.div`
   width: 100%;
-  max-width: 375px;
+  margin-bottom: 10px;
 `;
 
 const MainContentGroup = styled.div`
@@ -162,15 +270,12 @@ const MainContentGroup = styled.div`
   flex-direction: column;
   gap: 26px;
   width: 100%;
-  max-width: 375px;
-  background-color: var(--g60);
 `;
 
 const AlignCenter = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  padding-top: 10px;
 `;
 
 const Group = styled.div`
@@ -178,29 +283,16 @@ const Group = styled.div`
   flex-direction: column;
   gap: 14px;
   padding: 0 18px;
-  width: 100%;
 `;
 
 const Section = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  margin: 0 2px;
 `;
 
 const SectionTitle = styled.h2`
   color: var(--g20);
   font-size: 18px;
   font-weight: 600;
-  line-height: 100%;
-  flex: 1;
-`;
-
-const DepositInfo = styled.p`
-  font-size: 14px;
-  color: var(--p10);
-  line-height: 100%;
-  flex: 1;
-  text-align: right;
 `;
