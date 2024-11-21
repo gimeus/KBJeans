@@ -227,7 +227,7 @@ const KakaoMap: React.FC = () => {
       ></div>
       {selectedMarker &&(
           <CardContainer>
-            <Card status={getAnnouncementStatus(selectedMarker)} scale={selectedMarker.tot_suply_hshldco.toString()} apartmentName={selectedMarker.house_nm} address={selectedMarker.hssply_adres} pblanc_no={selectedMarker.pblanc_no} house_manage_no={selectedMarker.house_manage_no} liked={selectedMarker.isLiked} ></Card>
+            <Card status={getAnnouncementStatus(selectedMarker)} scale={selectedMarker.tot_suply_hshldco.toString()} apartmentName={selectedMarker.house_nm} address={selectedMarker.hssply_adres} pblanc_no={selectedMarker.pblanc_no} house_manage_no={selectedMarker.house_manage_no} liked={selectedMarker.isLiked} userId={1}></Card>
           </CardContainer>
       )}
     </MapContainer>  
@@ -286,11 +286,9 @@ const PlaceholderText = styled.span`
 const CardContainer = styled.div`
   position: absolute;
   bottom: 10px;  /* Adjust this to set the distance from the bottom of the map */
-  left: 10px;
   width: 100%;
-  padding: 10px;
   z-index: 10;  /* Ensure the card appears above the map */
-  background-color: white;  /* You can style the card's background as needed */
+  background-color: rgba(255, 255, 255, 0.5);
 `;
 
 const MapContainer = styled.div`
